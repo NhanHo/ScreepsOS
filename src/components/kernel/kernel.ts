@@ -1,9 +1,15 @@
 import { ProcessStatus } from "../processes/process-status";
-export let processQueue: Process[] = [];
+import { ProcessPriority } from "../processes/constants";
+import { Process } from "../../typings/process.d.ts";
+let ticlyQueue: Process[] = [];
+let ticlyLastQueue: Process[] = [];
+let lowPriorityQueue: Process[] = [];
 export let processTable: { [pid: string]: Process } = {};
 
 export let reboot = function () {
-    processQueue = [];
+    ticlyQueue = [];
+    ticlyLastQueue = [];
+    lowPriorityQueue = [];
     processTable = {};
 };
 
@@ -18,9 +24,10 @@ let getFreePid = function () {
     return currentPids.length;
 };
 
-export let addProcess = function <T extends Process>(p: T) {
+export let addProcess = function <T extends Process>(p: T, priority = ProcessPriority.LowPriority) {
     let pid = getFreePid();
     p.pid = pid;
+    p.priority = priority;
     processTable[p.pid] = p;
     Memory.processMemory[pid] = {};
     p.setMemory(getProcessMemory(pid));
@@ -36,14 +43,14 @@ export let killProcess = function (pid: number) {
     return pid;
 };
 
-export let getProcessById = function <T extends Process>(pid: number): T {
-    return <T>processTable[pid];
+export let getProcessById = function (pid: number): Process {
+    return processTable[pid];
 };
 
 
 export let storeProcessTable = function () {
     let aliveProcess = _.filter(_.values(processTable), (p: Process) => p.status != ProcessStatus.DEAD);
-    Memory["processTable"] = _.map(aliveProcess, (p: Process) => [p.pid, p.parentPID, p.classPath]);
+    Memory["processTable"] = _.map(aliveProcess, (p: Process) => [p.pid, p.parentPID, p.classPath, p.priority]);
 };
 
 export let getProcessMemory = function (pid: number) {
@@ -52,9 +59,9 @@ export let getProcessMemory = function (pid: number) {
     return Memory.processMemory[pid];
 };
 
-export let run = function () {
-    while (processQueue.length > 0) {
-        let process = processQueue.pop();
+let runOneQueue = function(queue: Process[]) {
+    while (queue.length > 0) {
+        let process = queue.pop();
         while (process) {
             try {
                 if (process.status !== ProcessStatus.DEAD)
@@ -63,9 +70,15 @@ export let run = function () {
                 console.log("Fail to run process:" + process.pid);
                 console.log(e.message);
             }
-            process = processQueue.pop();
+            process = queue.pop();
         }
     }
+
+}
+export let run = function () {
+    runOneQueue(ticlyQueue);
+    runOneQueue(ticlyLastQueue);
+    runOneQueue(lowPriorityQueue);
 };
 
 declare var require: any;
@@ -75,15 +88,24 @@ export let loadProcessTable = function () {
     Memory["processTable"] = Memory["processTable"] || [];
     let storedTable = Memory["processTable"];
     for (let item of storedTable) {
-        let [pid, parentPID, classPath] = item;
+        let [pid, parentPID, classPath, ...remaining] = item;
         try {
             let processClass = require(classPath);
             let memory = getProcessMemory(pid);
-            let p = new processClass(pid, parentPID);
+	    let priority = ProcessPriority.Ticly;
+	    if (remaining.length)
+		priority = remaining[0];
+            let p = new processClass(pid, parentPID, priority);
             p.setMemory(memory);
             //p.reloadFromMemory(getProcessMemory(p));
             processTable[p.pid] = p;
-            processQueue.push(p);
+	    if (priority === ProcessPriority.Ticly)
+		ticlyQueue.push(p);
+		if (priority === ProcessPriority.TiclyLast)
+		ticlyLastQueue.push(p);
+	    if (priority === ProcessPriority.LowPriority)
+		lowPriorityQueue.push(p);
+		
         } catch (e) {
             console.log("Error when loading:" + e.message);
             console.log(classPath);

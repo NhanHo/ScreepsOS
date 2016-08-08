@@ -1,11 +1,15 @@
 import { killProcess } from "../kernel/kernel";
+import { ProcessPriority } from "./constants";
+
 abstract class Process {
     public status: number;
     abstract run(): number;
     public classPath: string;
+    public priority: ProcessPriority;
     memory: any;
-    constructor(public pid: number, public parentPID: number) {
+    constructor(public pid: number, public parentPID: number, priority = ProcessPriority.LowPriority) {
         this.status = 1;
+	this.priority = priority;
     };
 
     setMemory(memory: any): void {
