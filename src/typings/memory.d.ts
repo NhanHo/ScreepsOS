@@ -1,0 +1,3 @@
+interface Memory {
+    processMemory: any
+}

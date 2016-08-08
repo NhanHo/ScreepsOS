@@ -1,0 +1,34 @@
+{
+  "name": "screeps-starter",
+  "version": "0.0.0",
+  "description": "",
+  "main": "./dist/main.js",
+  "repository": "resir014/screeps-typescript-starter",
+  "scripts": {
+    "gulp": "gulp",
+    "postinstall": "typings install",
+    "deploy": "gulp build",
+    "start": "gulp watch",
+    "test": "gulp lint",
+    "typings": "typings"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "deep-equal": "^1.0.1",
+    "gulp": "~3.9.0",
+    "gulp-clean": "^0.3.2",
+    "gulp-collect": "^0.1.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-tslint": "^6.0.1",
+    "gulp-typescript": "^2.13.6",
+    "gulp-util": "^3.0.7",
+    "lodash": "^4.13.1",
+    "q": "^1.4.1",
+    "recast": "^0.11.10",
+    "through2": "^2.0.1",
+    "tslint": "^3.13.0",
+    "typescript": "^2.0.0",
+    "typings": "^1.3.0"
+  }
+}
