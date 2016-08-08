@@ -22,7 +22,7 @@ module.exports = function (logAmount, stringFilter) {
               this.traverse(filePath);
             } else if (expr.callee.name == 'require') {
               this.traverse(filePath);
-              if (expr.arguments.length && expr.arguments[0].value[0] == '.') {
+              if (expr.arguments.length && expr.arguments[0].value && expr.arguments[0].value[0] == '.') {
                 let arg = expr.arguments[0];
                 let value = path.posix.normalize(path.dirname(file.relative).split(path.sep).join(path.posix.sep) + '/./' + arg.value);
                 let result = './' + value.split('/').join('.');
