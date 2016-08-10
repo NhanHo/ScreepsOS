@@ -8,9 +8,9 @@ interface CreepRequest {
     priority: number;
 }
 class SpawnProcess extends Process {
-
+    public classPath = "components.processes.room.spawn";
     public getRoomName() {
-	return this.memory.roomName;
+        return this.memory.roomName;
     }
     private findFreeSpawn(roomName: string) {
         let spawns = _.filter(Game.spawns,
@@ -27,16 +27,16 @@ class SpawnProcess extends Process {
 
 
     public spawn(id: string, bodyMap: bodyMap, pid: number, priority = 10): number {
-	let memory = this.memory;
-	let existing = _.find(<CreepRequest[]>memory.requestList, r => (r.creepID === id) &&  (r.pid === pid));
-	if (existing) {
-	    return -1;
-	} else {
-	    let creepRequest = {pid: pid, creepID: id, bodyParts: bodyMap, priority: priority};
-	    memory.requestList(creepRequest);
-	    return 0;
-	}
-	
+        let memory = this.memory;
+        let existing = _.find(<CreepRequest[]>memory.requestList, r => (r.creepID === id) && (r.pid === pid));
+        if (existing) {
+            return -1;
+        } else {
+            let creepRequest = { pid: pid, creepID: id, bodyParts: bodyMap, priority: priority };
+            memory.requestList.push(creepRequest);
+            return 0;
+        }
+
     }
     public run(): number {
         var makeBody = function (bodyMap: bodyMap): string[] {
@@ -53,15 +53,16 @@ class SpawnProcess extends Process {
             return <string[]>_.chain(bodyMap).map(replicatePart).flatten().value();
         };
 
-	let memory = this.memory;
-	memory.requestList = _.sortBy(<CreepRequest[]>memory.requestList, i=>i.priority).reverse();
-        let request = memory.requestList.pop();
+        let memory = this.memory;
+        memory.requestList = memory.requestList || [];
+        memory.requestList = _.sortBy(<CreepRequest[]>memory.requestList, i => i.priority).reverse();
+        let request: CreepRequest = memory.requestList.pop();
         let spawn = this.findFreeSpawn(this.memory.roomName);
         if (request) {
             if (spawn && spawn.canCreateCreep(makeBody(request.bodyParts)) === OK) {
-                let process = getProcessById(request.pid);
+                let process: any = getProcessById(request.pid);
                 let creepName = spawn.createCreep(makeBody(request.bodyParts));
-                process.receiveCreep(Game.creeps[creepName]);
+                process.receiveCreep(request.creepID, Game.creeps[creepName]);
             }
         }
         return 0;
@@ -69,9 +70,9 @@ class SpawnProcess extends Process {
     }
 
     public static start(parentPID: number) {
-	let p = new SpawnProcess(0, parentPID);
-	p = addProcess (p, ProcessPriority.TiclyLast);
-	return p;
+        let p = new SpawnProcess(0, parentPID);
+        p = addProcess(p, ProcessPriority.TiclyLast);
+        return p;
     }
 }
 

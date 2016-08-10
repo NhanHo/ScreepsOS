@@ -1,3 +1,4 @@
 export let ProcessStatus = {
-    DEAD: -1
+    DEAD: -1,
+    ALIVE: 0
 };

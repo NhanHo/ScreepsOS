@@ -26,6 +26,10 @@ let getFreePid = function () {
 };
 
 
+let garbageCollection = function () {
+    let processTable = Memory.processTable;
+    Memory.processMemory = _.pick(Memory.processMemory, (_: any, k: string) => (processTable[k]));
+}
 export let addProcess = function <T extends Process>(p: T, priority = ProcessPriority.LowPriority) {
     let pid = getFreePid();
     p.pid = pid;
@@ -52,6 +56,7 @@ export let getProcessById = function (pid: number): Process {
 
 export let storeProcessTable = function () {
     let aliveProcess = _.filter(_.values(processTable), (p: Process) => p.status != ProcessStatus.DEAD);
+
     Memory["processTable"] = _.map(aliveProcess, (p: Process) => [p.pid, p.parentPID, p.classPath, p.priority]);
 };
 
@@ -72,6 +77,7 @@ let runOneQueue = function (queue: Process[]) {
             } catch (e) {
                 console.log("Fail to run process:" + process.pid);
                 console.log(e.message);
+                console.log(e.stack);
             }
             process = queue.pop();
         }
@@ -79,6 +85,8 @@ let runOneQueue = function (queue: Process[]) {
 
 }
 export let run = function () {
+    garbageCollection();
+
     runOneQueue(ticlyQueue);
     runOneQueue(ticlyLastQueue);
     runOneQueue(lowPriorityQueue);

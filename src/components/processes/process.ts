@@ -1,6 +1,6 @@
 import { killProcess } from "../kernel/kernel";
 import { ProcessPriority } from "./constants";
-
+import { ProcessStatus } from "./process-status";
 abstract class Process {
     public status: number;
     abstract run(): number;
@@ -9,7 +9,7 @@ abstract class Process {
     public priority: ProcessPriority;
     memory: any;
     constructor(public pid: number, public parentPID: number, priority = ProcessPriority.LowPriority) {
-        this.status = 1;
+        this.status = ProcessStatus.ALIVE;
         this.priority = priority;
     };
 

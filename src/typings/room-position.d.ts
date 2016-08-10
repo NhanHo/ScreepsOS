@@ -1,0 +1,3 @@
+interface RoomPosition {
+    adjacentPositions: () => RoomPosition[];
+}
