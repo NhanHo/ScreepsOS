@@ -1,4 +1,5 @@
 import { ProcessStatus } from "../processes/process-status";
+
 import { ProcessPriority } from "../processes/constants";
 import { Process } from "../../typings/process.d.ts";
 let ticlyQueue: Process[] = [];
@@ -23,6 +24,7 @@ let getFreePid = function () {
     }
     return currentPids.length;
 };
+
 
 export let addProcess = function <T extends Process>(p: T, priority = ProcessPriority.LowPriority) {
     let pid = getFreePid();
@@ -59,7 +61,8 @@ export let getProcessMemory = function (pid: number) {
     return Memory.processMemory[pid];
 };
 
-let runOneQueue = function(queue: Process[]) {
+
+let runOneQueue = function (queue: Process[]) {
     while (queue.length > 0) {
         let process = queue.pop();
         while (process) {
@@ -92,20 +95,19 @@ export let loadProcessTable = function () {
         try {
             let processClass = require(classPath);
             let memory = getProcessMemory(pid);
-	    let priority = ProcessPriority.Ticly;
-	    if (remaining.length)
-		priority = remaining[0];
+            let priority = ProcessPriority.Ticly;
+            if (remaining.length)
+                priority = remaining[0];
             let p = new processClass(pid, parentPID, priority);
             p.setMemory(memory);
             //p.reloadFromMemory(getProcessMemory(p));
             processTable[p.pid] = p;
-	    if (priority === ProcessPriority.Ticly)
-		ticlyQueue.push(p);
-		if (priority === ProcessPriority.TiclyLast)
-		ticlyLastQueue.push(p);
-	    if (priority === ProcessPriority.LowPriority)
-		lowPriorityQueue.push(p);
-		
+            if (priority === ProcessPriority.Ticly)
+                ticlyQueue.push(p);
+            if (priority === ProcessPriority.TiclyLast)
+                ticlyLastQueue.push(p);
+            if (priority === ProcessPriority.LowPriority)
+                lowPriorityQueue.push(p);
         } catch (e) {
             console.log("Error when loading:" + e.message);
             console.log(classPath);

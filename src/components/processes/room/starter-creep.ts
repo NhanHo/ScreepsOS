@@ -95,7 +95,7 @@ class StarterCreepProcess extends Process {
         if (!creep) {
             let p = <StarterProcess>getProcessById(this.parentPID);
             p.creepDies(this.pid);
-	    return this.stop(0);
+            return this.stop(0);
         } else {
             this.runCreep(creep);
             return 0;

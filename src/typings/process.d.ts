@@ -1,4 +1,4 @@
-import {ProcessPriority} from "../components/processes/constants";
+import { ProcessPriority } from "../components/processes/constants";
 
 export interface Process {
     pid: number;

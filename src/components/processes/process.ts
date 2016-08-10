@@ -5,11 +5,12 @@ abstract class Process {
     public status: number;
     abstract run(): number;
     public classPath: string;
+
     public priority: ProcessPriority;
     memory: any;
     constructor(public pid: number, public parentPID: number, priority = ProcessPriority.LowPriority) {
         this.status = 1;
-	this.priority = priority;
+        this.priority = priority;
     };
 
     setMemory(memory: any): void {
