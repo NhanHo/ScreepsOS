@@ -18,10 +18,10 @@ abstract class Process {
 
     public stop(signal: number) {
         /*        if (this.parentPID) {
-                    let process = getProcessById(this.parentPID);
-                    //if (process)
-                    //process.signalParent(this.pid);
-                }*/
+                  let process = getProcessById(this.parentPID);
+                  //if (process)
+                  //process.signalParent(this.pid);
+                  }*/
         killProcess(this.pid);
         return signal;
     }
