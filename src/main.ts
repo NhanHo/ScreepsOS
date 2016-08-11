@@ -27,4 +27,7 @@ export function loop() {
     global.startRoomMining = startRoomMining;
     run();
     storeProcessTable();
+
+    // We reload the process table, to make sure it's updated for our command line
+    loadProcessTable(); 
 }

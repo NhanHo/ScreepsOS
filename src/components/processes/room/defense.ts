@@ -1,8 +1,12 @@
 import Process = require("../process");
-import { addProcess } from "../../kernel/kernel";
+import { addProcess, getProcessById } from "../../kernel/kernel";
 class DefenseProcess extends Process {
     public classPath = "components.processes.room.defense";
     public run(): number {
+	let colonyProcess = getProcessById(this.parentPID);
+	if (!colonyProcess)
+	    return this.stop(0);
+	
         let roomName = this.memory.roomName;
         let room = Game.rooms[roomName];
         let hostileCreepList = <Creep[]>room.find(FIND_HOSTILE_CREEPS);

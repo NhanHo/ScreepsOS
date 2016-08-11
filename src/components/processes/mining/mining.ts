@@ -34,6 +34,7 @@ class MiningProcess extends Process {
             let p = new MinerCreep(0, this.pid);
             p = addProcess(p);
             p.setUp(creepName, this.memory.sourceId);
+	    p.parentPID = this.pid;
             this.memory.minerPid = p.pid;
         }
 
@@ -42,6 +43,7 @@ class MiningProcess extends Process {
             p = addProcess(p);
             //TODO: allows different receiver object here
             p.setUp(creepName, Game.rooms[this.memory.roomName].storage.id);
+	    p.parentPID = this.pid;
             this.memory.courierPidList.push(p.pid);
         }
 

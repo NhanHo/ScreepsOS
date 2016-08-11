@@ -1,9 +1,13 @@
 import Process = require("../process");
 import { getSpawnProcess } from "../../kernel/kernel-utils";
-import { addProcess } from "../../kernel/kernel";
+import { addProcess, getProcessById } from "../../kernel/kernel";
 class UpgraderProcess extends Process {
     public classPath = "components.processes.room.upgrader";
     public run(): number {
+	let colonyProcess = getProcessById(this.parentPID);
+	if (!colonyProcess)
+	    return this.stop(0);
+	
         let memory = this.memory;
         let upgraderName = memory.name;
         if (upgraderName && Game.creeps[upgraderName])

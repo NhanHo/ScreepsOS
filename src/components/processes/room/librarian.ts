@@ -1,4 +1,5 @@
 import Process = require("../process");
+import { getProcessById } from "../../kernel/kernel";
 import { getSpawnProcess } from "../../kernel/kernel-utils";
 class LibrarianProcess extends Process {
 
@@ -89,6 +90,10 @@ class LibrarianProcess extends Process {
     }
 
     public run(): number {
+	let colonyProcess = getProcessById(this.parentPID);
+	if (!colonyProcess)
+	    return this.stop(0);
+	
         let memory = this.memory;
         let smallCreepName = memory.smallCreepName;
         let creepName = memory.creepName;

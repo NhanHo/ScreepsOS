@@ -39,6 +39,10 @@ class SpawnProcess extends Process {
 
     }
     public run(): number {
+	let colonyProcess = getProcessById(this.parentPID);
+	if (!colonyProcess)
+	    return this.stop(0);
+	
         var makeBody = function (bodyMap: bodyMap): string[] {
             let partMap: { [s: string]: string } = {
                 WORK: WORK,
