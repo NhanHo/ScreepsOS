@@ -17,6 +17,7 @@
 *.zip
 *.vi
 *~
+\#*.*#
 
 # =========================
 # Operating System Files
