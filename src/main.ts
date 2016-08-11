@@ -15,8 +15,10 @@ import room_position = require("./prototypes/room-position");
 import { startRoomMining } from "./components/cli/mining";
 import structure_prototype = require("./prototypes/structure");
 declare var global: any;
+import cli = require("./components/cli/wrapper");
 export function loop() {
     // This is executed every tick
+    global.__ = cli;
     room_position();
     structure_prototype();
     loadProcessTable();
