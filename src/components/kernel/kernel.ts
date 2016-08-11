@@ -26,8 +26,7 @@ let getFreePid = function () {
 };
 
 
-let garbageCollection = function () {
-    let processTable = Memory.processTable;
+export let garbageCollection = function () {
     Memory.processMemory = _.pick(Memory.processMemory, (_: any, k: string) => (processTable[k]));
 }
 export let addProcess = function <T extends Process>(p: T, priority = ProcessPriority.LowPriority) {
@@ -85,8 +84,6 @@ let runOneQueue = function (queue: Process[]) {
 
 }
 export let run = function () {
-    garbageCollection();
-
     runOneQueue(ticlyQueue);
     runOneQueue(ticlyLastQueue);
     runOneQueue(lowPriorityQueue);
