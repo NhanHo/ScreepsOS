@@ -93,6 +93,7 @@ class StarterCreepProcess extends Process {
         let creep = Game.creeps[this.memory.creepName];
 
         if (!creep) {
+            console.log("A creep has disappeared:" + this.memory.creepName);
             let p = <StarterProcess>getProcessById(this.parentPID);
             p.creepDies(this.pid);
             return this.stop(0);

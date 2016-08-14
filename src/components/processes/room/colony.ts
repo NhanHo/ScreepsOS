@@ -5,6 +5,7 @@ import { addProcess } from "../../kernel/kernel";
 import LibrarianProcess = require("./librarian");
 import UpgraderProcess = require("./upgrader");
 import DefenseProcess = require("./defense");
+//import BuilderPlannerProcess = require("./building-planner");
 class ColonyProcess extends Process {
     public classPath = "components.processes.room.colony";
     public static start(roomName: string) {
@@ -34,21 +35,30 @@ class ColonyProcess extends Process {
     }
     public run(): number {
         let memory = this.memory;
-        let spawnPID = memory.spawnPID;
+        let room = Game.rooms[memory.roomName];
 
-        if (!spawnPID || !getProcessById(spawnPID)) {
-            memory.spawnPID = this.launchSpawnProcess();
-        }
+        //let buildingPlannerPID = memory.buildingPlannerPID;
+        //if (!buildingPlannerPID || !getProcessById(buildingPlannerPID))
+        //    memory.buildingPlannerPID = BuilderPlannerProcess.start(room.name).pid;
 
-        let upgraderPID = memory.upgraderPID;
+        if (room.controller.level >= 4 && room.storage && room.storage.store.energy > 40000) {
+            let spawnPID = memory.spawnPID;
+            if (!spawnPID || !getProcessById(spawnPID)) {
+                memory.spawnPID = this.launchSpawnProcess();
+            }
 
-        if (!upgraderPID || !getProcessById(upgraderPID)) {
-            memory.upgraderPID = UpgraderProcess.start(memory.roomName, this.pid);
-        }
+            let upgraderPID = memory.upgraderPID;
 
-        let defenderPID = memory.defenderPID;
-        if (!defenderPID || !getProcessById(defenderPID)) {
-            memory.defenderPID = DefenseProcess.start(memory.roomName, this.pid);
+            if (!upgraderPID || !getProcessById(upgraderPID)) {
+                console.log("Starting upgrader process for Room:" + room.name);
+                memory.upgraderPID = UpgraderProcess.start(memory.roomName, this.pid);
+            }
+
+            let defenderPID = memory.defenderPID;
+            if (!defenderPID || !getProcessById(defenderPID)) {
+                console.log("Starting defender process for Room:" + room.name);
+                memory.defenderPID = DefenseProcess.start(memory.roomName, this.pid);
+            }
         }
         return 0;
     }
