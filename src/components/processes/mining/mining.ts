@@ -81,6 +81,20 @@ class MiningProcess extends Process {
     }
 
 
+    public needMoreCourier(): number {
+        let lastCourierIncrease = this.memory.lastCourierIncrease = this.memory.lastCourierIncrease || (Game.time - 1501);
+
+        if (lastCourierIncrease > (Game.time - 1501))
+            return -1;
+        if (this.memory.courierCount == 3) {
+            console.log("Mining at source " + this.memory.sourceId +
+                " is requiring too many couriers");
+            return -1;
+        }
+        this.memory.courierCount += 1;
+        this.memory.lastCourierIncrease = Game.time;
+        return 0;
+    }
     public run(): number {
         this.memory.courierCount = this.memory.courierCount || 1;
         this.memory.courierPidList = this.memory.courierPidList || [];

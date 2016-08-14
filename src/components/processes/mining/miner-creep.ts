@@ -1,6 +1,6 @@
 import Process = require("../process");
 import { getProcessById } from "../../kernel/kernel";
-
+import MiningProcess = require("../mining/mining");
 class MinerCreepProcess extends Process {
     public classPath = "components.processes.mining.miner-creep";
     /* Memory has
@@ -34,6 +34,10 @@ class MinerCreepProcess extends Process {
                 }
                 if (container.store.energy > 0)
                     container.transfer(creep, RESOURCE_ENERGY);
+                if (container.store.energy > 1800) {
+                    let p = <MiningProcess>getProcessById(this.parentPID);
+                    p.needMoreCourier();
+                }
             } else {
                 let constructionSite: ConstructionSite[] = <ConstructionSite[]>creep.pos.lookFor(LOOK_CONSTRUCTION_SITES);
                 if (!constructionSite.length) {
