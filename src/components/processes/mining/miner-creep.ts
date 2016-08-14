@@ -13,16 +13,45 @@ class MinerCreepProcess extends Process {
     }
 
     public runCreep(creep: Creep) {
+        // Right now, we will make the miner check for its own container, and build or repair as needed
+        // Ideally, this could be done from outside.
+        // TODO: Best way to do this would be to have a separate creep that will do repair, and spawn it as necessary (and by separate creep, I mean a different class)
         let source = <Source>Game.getObjectById(this.memory.sourceId);
+        let containerList = _.filter(<Container[]>creep.pos.lookFor(LOOK_STRUCTURES),
+            s => s.structureType === STRUCTURE_CONTAINER);
+        let container = <Container>containerList![0];
         if (creep.pos.isNearTo(source)) {
             creep.harvest(source);
             let energy = <Resource[]>creep.pos.lookFor(LOOK_ENERGY);
             if (energy.length) {
                 creep.pickup(energy[0]);
             }
+            if (container) {
+                let container = containerList[0];
+                if (container.hits < (0.5 * container.hitsMax)) {
+                    if (creep.carry.energy > 30)
+                        creep.repair(container);
+                }
+                if (container.store.energy > 0)
+                    container.transfer(creep, RESOURCE_ENERGY);
+            } else {
+                let constructionSite: ConstructionSite[] = <ConstructionSite[]>creep.pos.lookFor(LOOK_CONSTRUCTION_SITES);
+                if (!constructionSite.length) {
+                    creep.pos.createConstructionSite(STRUCTURE_CONTAINER);
+                    constructionSite = <ConstructionSite[]>creep.pos.lookFor(LOOK_CONSTRUCTION_SITES);
+                }
+                if (creep.carry.energy > 30)
+                    creep.build(constructionSite[0]);
+            }
 
-        } else
-            creep.moveTo(source);
+
+
+        } else {
+            let [x, y, roomName] = this.memory.miningSpot;
+            let pos = new RoomPosition(x, y, roomName);
+            creep.moveTo(pos);
+
+        }
     }
 
     public stop(signal: number): number {

@@ -45,7 +45,8 @@ class CourierProcess extends Process {
         } else {
             if (minerCreep) {
                 creep.moveTo(minerCreep);
-                minerCreep.transfer(creep, RESOURCE_ENERGY);
+                if (minerCreep.carry.energy === minerCreep.carryCapacity)
+                    minerCreep.transfer(creep, RESOURCE_ENERGY);
             }
         }
 
