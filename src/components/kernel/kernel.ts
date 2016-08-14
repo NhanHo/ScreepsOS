@@ -107,6 +107,7 @@ export let loadProcessTable = function () {
             p.setMemory(memory);
             //p.reloadFromMemory(getProcessMemory(p));
             processTable[p.pid] = p;
+            //console.log(p);
             if (priority === ProcessPriority.Ticly)
                 ticlyQueue.push(p);
             if (priority === ProcessPriority.TiclyLast)

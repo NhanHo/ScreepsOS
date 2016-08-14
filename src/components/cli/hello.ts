@@ -1,3 +1,3 @@
-export = function(_: any) {
-    console.log ("Hello, world");
+export = function (argv: string[]) {
+    console.log("Hello, world:" + argv[0]);
 }

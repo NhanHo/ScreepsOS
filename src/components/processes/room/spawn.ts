@@ -39,16 +39,18 @@ class SpawnProcess extends Process {
 
     }
     public run(): number {
-	let colonyProcess = getProcessById(this.parentPID);
-	if (!colonyProcess)
-	    return this.stop(0);
-	
+        let colonyProcess = getProcessById(this.parentPID);
+        if (!colonyProcess)
+            return this.stop(0);
+
         var makeBody = function (bodyMap: bodyMap): string[] {
+            //TODO : Fix the part map, this need to include all part type somehow
             let partMap: { [s: string]: string } = {
                 WORK: WORK,
                 MOVE: MOVE,
                 CARRY: CARRY,
-                ATTACK: ATTACK
+                ATTACK: ATTACK,
+                CLAIM: CLAIM
             };
             let replicatePart = function (times: number, part: string) {
                 return _.map(_.times(times, x => x),
