@@ -61,10 +61,12 @@ class SpawnProcess extends Process {
 
         let memory = this.memory;
         memory.requestList = memory.requestList || [];
-        memory.requestList = _.sortBy(<CreepRequest[]>memory.requestList, i => i.priority).reverse();
+        memory.requestList = _.sortBy(<CreepRequest[]>memory.requestList, i => i.priority);
         let request: CreepRequest = memory.requestList.pop();
+
         let spawn = this.findFreeSpawn(this.memory.roomName);
         if (request) {
+
             if (spawn && spawn.canCreateCreep(makeBody(request.bodyParts)) === OK) {
                 let process: any = getProcessById(request.pid);
                 let creepName = spawn.createCreep(makeBody(request.bodyParts));

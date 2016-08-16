@@ -54,6 +54,8 @@ class StarterClaimCreepProcess extends Process {
             var source: Source = <Source>creep.room.find(FIND_SOURCES)[index];
             creep.moveTo(source);
             creep.harvest(source);
+            if (creep.pos.inRangeTo(creep.room.controller.pos, 3))
+                creep.upgradeController(creep.room.controller);
 
         } else {
             if (creep.carry.energy == 0) {

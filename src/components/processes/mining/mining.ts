@@ -3,6 +3,16 @@ import MinerCreep = require("./miner-creep");
 import CourierCreep = require("./courier");
 import { addProcess, getProcessById } from "../../kernel/kernel";
 import { getSpawnProcess } from "../../kernel/kernel-utils";
+import { OvermindMemory } from "../memory/overmind";
+interface MiningMemory extends OvermindMemory {
+    minerPid: number | null;
+    courierPidList: number[];
+    sourceId: string;
+    courierCount: number;
+    miningSpot: any;
+    lastCourierIncrease: number;
+    flagName: string;
+}
 
 class MiningProcess extends Process {
     /* Memory has:
@@ -11,6 +21,7 @@ class MiningProcess extends Process {
      * courier pid
      * source ID: sourceId
      */
+    public memory: MiningMemory;
     public classPath = "components.processes.mining.mining";
 
     public minerDies(minerPID: number) {
@@ -19,7 +30,7 @@ class MiningProcess extends Process {
     }
 
     public setup(roomName: string, sourceId: string) {
-        this.memory.roomName = roomName;
+        this.memory.spawningRoomName = roomName;
         this.memory.sourceId = sourceId;
         this.memory.courierCount = this.memory.courierCount || 1;
         this.memory.courierPidList = this.memory.courierPidList || [];
@@ -31,8 +42,11 @@ class MiningProcess extends Process {
 
     private getMiningSpot(): any {
         if (!this.memory.miningSpot) {
-            let source = <Source>Game.getObjectById(this.memory.sourceId);
-            let storage = Game.rooms[this.memory.roomName].storage;
+            let source = <RoomObject>Game.getObjectById(this.memory.sourceId);
+            if (!source) {
+                source = Game.flags[this.memory.flagName];
+            }
+            let storage = Game.rooms[this.memory.spawningRoomName].storage;
             let pathResult = PathFinder.search(storage.pos, { pos: source.pos, range: 1 });
             let path = pathResult.path;
             let pos = path[path.length - 1];
@@ -55,7 +69,7 @@ class MiningProcess extends Process {
             let p = new CourierCreep(0, this.pid);
             p = addProcess(p);
             //TODO: allows different receiver object here
-            p.setUp(creepName, Game.rooms[this.memory.roomName].storage.id);
+            p.setUp(creepName, Game.rooms[this.memory.spawningRoomName].storage.id);
             p.parentPID = this.pid;
             this.memory.courierPidList.push(p.pid);
         }
@@ -73,7 +87,7 @@ class MiningProcess extends Process {
 
     protected spawnCreep(creepID: string, bodyParts: bodyMap, priority?: number) {
         //TODO: Check and throw error when there is no roomName
-        let spawnProcess = getSpawnProcess(this.memory.roomName);
+        let spawnProcess = getSpawnProcess(this.memory.spawningRoomName);
 
         if (spawnProcess) {
             spawnProcess.spawn(creepID, bodyParts, this.pid, priority);
@@ -99,6 +113,23 @@ class MiningProcess extends Process {
         this.memory.courierCount = this.memory.courierCount || 1;
         this.memory.courierPidList = this.memory.courierPidList || [];
         let memory = this.memory;
+        if (!memory.spawningRoomName) {
+            memory.spawningRoomName = memory["roomName"];
+            memory["roomName"] = undefined;
+        }
+        if (!memory.flagName) {
+            let source = <Source>Game.getObjectById(memory.sourceId);
+            if (!source) {
+                console.log("Error: no vision of source and no flag for source " + memory.sourceId);
+                return 0;
+            }
+            let result = source.pos.createFlag(source.id, COLOR_YELLOW);
+            if (_.isString(result)) {
+                memory.flagName = result;
+            } else {
+                return 0;
+            }
+        }
         if (!memory.minerPid)
             this.spawnCreep("miner", { WORK: 6, MOVE: 6, CARRY: 1 }, 90);
         else if (memory.courierPidList.length < memory.courierCount) {
