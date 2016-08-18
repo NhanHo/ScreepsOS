@@ -47,6 +47,13 @@ class CourierProcess extends Process {
                 creep.moveTo(minerCreep);
                 if (minerCreep.carry.energy === minerCreep.carryCapacity)
                     minerCreep.transfer(creep, RESOURCE_ENERGY);
+                let containerList = <Container[]>minerCreep.pos.lookFor(STRUCTURE_CONTAINER);
+                if (containerList.length) {
+                    let container = containerList[0];
+                    if (_.sum(container.store) > 200)
+                        container.transfer(creep, RESOURCE_ENERGY);
+                }
+
             }
         }
 

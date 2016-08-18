@@ -1,7 +1,7 @@
 import OvermindProcess = require("../overmind");
 import { OvermindMemory } from "../memory/overmind";
-import RemoteMiningProcess = require("./remote-mining");
-import { addProcess } from "../../kernel/kernel";
+//import RemoteMiningProcess = require("../room/remote-mining");
+//import { addProcess } from "../../kernel/kernel";
 interface RemoteMiningStarterMemory extends OvermindMemory {
     targetRoomName: string;
     scout: string;
@@ -31,10 +31,10 @@ class RemoteMiningStarter extends OvermindProcess {
             for (let source of sources) {
                 let result = source.pos.createFlag(source.id, COLOR_YELLOW);
                 if (_.isString(result)) {
-                    let mining = new RemoteMiningProcess(0, 0);
+                    /*let mining = new RemoteMiningProcess(0, 0);
                     addProcess(mining);
                     mining.memory.sourceId = source.id;
-                    mining.memory.flagName = result;
+                    mining.memory.flagName = result;*/
                 }
             }
             console.log("Mining process started, terminate RemoteMiningStarter process");

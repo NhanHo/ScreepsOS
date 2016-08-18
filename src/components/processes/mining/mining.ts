@@ -1,7 +1,7 @@
 import Process = require("../process");
 import MinerCreep = require("./miner-creep");
 import CourierCreep = require("./courier");
-import { addProcess, getProcessById } from "../../kernel/kernel";
+import { addProcess, getProcessById, sleepProcess } from "../../kernel/kernel";
 import { getSpawnProcess } from "../../kernel/kernel-utils";
 import { OvermindMemory } from "../memory/overmind";
 interface MiningMemory extends OvermindMemory {
@@ -10,8 +10,10 @@ interface MiningMemory extends OvermindMemory {
     sourceId: string;
     courierCount: number;
     miningSpot: any;
-    lastCourierIncrease: number;
+    lastCourierCountChange: number;
     flagName: string;
+    lastLowContainerUsage: number;
+    lowContainerUsageStreak: number;
 }
 
 class MiningProcess extends Process {
@@ -96,7 +98,7 @@ class MiningProcess extends Process {
 
 
     public needMoreCourier(): number {
-        let lastCourierIncrease = this.memory.lastCourierIncrease = this.memory.lastCourierIncrease || (Game.time - 1501);
+        let lastCourierIncrease = this.memory.lastCourierCountChange = this.memory.lastCourierCountChange || (Game.time - 1501);
 
         if (lastCourierIncrease > (Game.time - 1501))
             return -1;
@@ -106,9 +108,45 @@ class MiningProcess extends Process {
             return -1;
         }
         this.memory.courierCount += 1;
-        this.memory.lastCourierIncrease = Game.time;
+        this.memory.lastCourierCountChange = Game.time;
         return 0;
     }
+
+    public lowContainerUsage(): number {
+        let lastTick = this.memory.lastLowContainerUsage = this.memory.lastLowContainerUsage || Game.time;
+        this.memory.lowContainerUsageStreak = this.memory.lowContainerUsageStreak || 0;
+        if (lastTick === (Game.time - 1))
+            this.memory.lowContainerUsageStreak += 1;
+        else
+            this.memory.lowContainerUsageStreak = 0;
+
+        if ((this.memory.lowContainerUsageStreak > 750) && (this.memory.courierCount > 1)) {
+
+            this.memory.lastCourierCountChange = this.memory.lastCourierCountChange || (Game.time - 1501);
+            if (this.memory.lastCourierCountChange > (Game.time - 1501))
+                return -1;
+            this.memory.lastCourierCountChange = Game.time;
+            this.memory.courierCount -= 1;
+
+        }
+
+        this.memory.lastLowContainerUsage = Game.time;
+
+        return 0;
+    }
+    private invaderCheck() {
+        if (!this.memory.miningSpot)
+            return;
+        let room = Game.rooms[this.memory.miningSpot[2]];
+        let invaderList = <Creep[]>room.find(FIND_HOSTILE_CREEPS,
+            { filter: c => c.owner.username === "Invader" });
+        let invader = invaderList.pop();
+        if (invader) {
+            if (!room.controller.my)
+                sleepProcess(this, 1500);
+        }
+    }
+
     public run(): number {
         this.memory.courierCount = this.memory.courierCount || 1;
         this.memory.courierPidList = this.memory.courierPidList || [];
@@ -135,6 +173,8 @@ class MiningProcess extends Process {
         else if (memory.courierPidList.length < memory.courierCount) {
             this.spawnCreep("courier", { MOVE: 10, CARRY: 10 });
         }
+
+        this.invaderCheck();
         return 0;
     }
 

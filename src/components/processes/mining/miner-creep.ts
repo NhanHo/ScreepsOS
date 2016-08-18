@@ -38,6 +38,10 @@ class MinerCreepProcess extends Process {
                     let p = <MiningProcess>getProcessById(this.parentPID);
                     p.needMoreCourier();
                 }
+                if (_.sum(container.store) < 300) {
+                    let p = <MiningProcess>getProcessById(this.parentPID);
+                    p.lowContainerUsage();
+                }
             } else {
                 let constructionSite: ConstructionSite[] = <ConstructionSite[]>creep.pos.lookFor(LOOK_CONSTRUCTION_SITES);
                 if (!constructionSite.length) {

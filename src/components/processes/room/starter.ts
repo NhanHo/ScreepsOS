@@ -28,7 +28,7 @@ class StarterProcess extends Process {
             return <string[]>_.chain(bodyMap).map(replicatePart).flatten().value();
         };
 
-        return Game.spawns["Spawn1"].createCreep(makeBody(bodyParts), undefined);
+        return Game.spawns["Spawn2"].createCreep(makeBody(bodyParts), undefined);
     }
 
     public creepDies(childPid: number) {
@@ -43,7 +43,12 @@ class StarterProcess extends Process {
         let energyCapacity = room.energyCapacityAvailable;
         let multiplier = Math.floor(energyCapacity / 250);
         if (creepList.length < 12) {
+            if (creepList.length === 0) {
+                let energyCapacity = room.energyAvailable;
+                multiplier = Math.floor(energyCapacity / 250);
+            }
             let result = this.spawnCreep({ WORK: 1 * multiplier, MOVE: 2 * multiplier, CARRY: 1 * multiplier });
+
             if (_.isString(result)) {
                 let process = new StarterCreepProcess(0, this.pid);
                 addProcess(process);

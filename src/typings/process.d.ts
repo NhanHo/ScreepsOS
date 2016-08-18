@@ -1,5 +1,5 @@
 import { ProcessPriority } from "../components/processes/constants";
-
+import { ProcessSleep } from "./process-sleep.d.ts";
 export interface Process {
     pid: number;
     parentPID: number;
@@ -8,4 +8,5 @@ export interface Process {
     classPath: string;
     setMemory(memory: any): void;
     priority: ProcessPriority;
+    sleepInfo?: ProcessSleep;
 }

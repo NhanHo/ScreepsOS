@@ -48,6 +48,12 @@ export let killProcess = function (pid: number) {
     return pid;
 };
 
+export let sleepProcess = function (p: Process, ticks: number) {
+    p.status = ProcessStatus.SLEEP;
+    p.sleepInfo = { start: Game.time, duration: ticks };
+    return p;
+}
+
 export let getProcessById = function (pid: number): Process {
     return processTable[pid];
 };
@@ -65,13 +71,15 @@ export let getProcessMemory = function (pid: number) {
     return Memory.processMemory[pid];
 };
 
-
 let runOneQueue = function (queue: Process[]) {
     while (queue.length > 0) {
         let process = queue.pop();
         while (process) {
             try {
-                if (process.status !== ProcessStatus.DEAD)
+                if ((process.status === ProcessStatus.SLEEP) &&
+                    ((process.sleepInfo!.start + process.sleepInfo!.duration) > Game.time))
+                    process.status = ProcessStatus.ALIVE;
+                if (process.status === ProcessStatus.ALIVE)
                     process.run();
             } catch (e) {
                 console.log("Fail to run process:" + process.pid);
