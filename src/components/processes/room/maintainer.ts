@@ -14,7 +14,7 @@ export = class MaintainerProcess extends OvermindProcess {
 
     public receiveCreep(id: string, creep: Creep) {
         if (id === "maintainer") {
-            const p = new MaintainerCreep(0, 0);
+            const p = new MaintainerCreep(0, this.pid);
             MaintainerProcess.addProcess(p);
             p.memory.creepName = creep.name;
             p.memory.roomName = this.memory.roomName;

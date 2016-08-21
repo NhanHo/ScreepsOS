@@ -28,7 +28,7 @@ export = class MaintainerCreep extends CreepProcess {
         let storage = room.storage;
         if (room.storage) {
             creep.moveTo(storage);
-            storage.transfer(creep, RESOURCE_ENERGY);
+            creep.withdraw(storage, RESOURCE_ENERGY);
         }
     }
 
