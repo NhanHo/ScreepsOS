@@ -1,4 +1,4 @@
 interface Memory {
-    processMemory: any,
-    processTable: any
+    processMemory: any;
+    processTable: any;
 }

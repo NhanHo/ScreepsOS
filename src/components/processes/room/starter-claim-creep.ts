@@ -8,12 +8,23 @@ interface StarterClaimCreepMemory {
     creepName: string;
 }
 class StarterClaimCreepProcess extends Process {
-
-    readonly classPath = "components.processes.room.starter-claim-creep";
-
+    public readonly classPath = "components.processes.room.starter-claim-creep";
     public memory: StarterClaimCreepMemory;
+
     public getIndex() {
         return this.memory.index;
+    }
+    public run(): number {
+        let creep = Game.creeps[this.memory.creepName];
+        if (!creep) {
+            console.log("A creep has disappeared:" + this.memory.creepName);
+            let p = <ClaimProcess>getProcessById(this.parentPID);
+            p.creepDies(this.pid);
+            return this.stop(0);
+        } else {
+            this.runCreep(creep);
+            return 0;
+        }
     }
 
     private moveToAnotherRoom(creep: Creep): number {
@@ -26,7 +37,7 @@ class StarterClaimCreepProcess extends Process {
 
     }
     private runCreep(creep: Creep) {
-        let starterProcess = <ClaimProcess>getProcessById(this.parentPID);
+        const starterProcess = <ClaimProcess>getProcessById(this.parentPID);
         if (!starterProcess) {
             creep.suicide();
             this.stop(0);
@@ -35,50 +46,48 @@ class StarterClaimCreepProcess extends Process {
         if (this.moveToAnotherRoom(creep) === 0)
             return 0;
 
-        let memory = this.memory;
-        var room = creep.room;
+        const memory = this.memory;
+        const room = creep.room;
         let index = memory.index;
 
         if (!index) {
             index = this.memory.index = starterProcess.getNeededIndex();
         }
-        var targets: ConstructionSite[] = <ConstructionSite[]>room.find(FIND_CONSTRUCTION_SITES);
-        if (memory.currentAction == undefined) memory.currentAction = "Mine";
+        const targets: ConstructionSite[] = <ConstructionSite[]>room.find(FIND_CONSTRUCTION_SITES);
+        memory.currentAction = memory.currentAction || "Mine";
 
-        if (memory.currentAction == "Mine") {
-            if (creep.carry.energy == creep.carryCapacity) {
+        if (memory.currentAction === "Mine") {
+            if (creep.carry.energy === creep.carryCapacity) {
                 memory.currentAction = "Build";
                 return;
             }
 
-            var source: Source = <Source>creep.room.find(FIND_SOURCES)[index];
+            const source: Source = <Source>creep.room.find(FIND_SOURCES)[index];
             creep.moveTo(source);
             creep.harvest(source);
             if (creep.pos.inRangeTo(creep.room.controller.pos, 3))
                 creep.upgradeController(creep.room.controller);
 
         } else {
-            if (creep.carry.energy == 0) {
+            if (creep.carry.energy === 0) {
                 memory.currentAction = "Mine";
                 return;
 
             }
-
-
             if (creep.room.controller.ticksToDowngrade < 1000) {
                 creep.moveTo(creep.room.controller);
                 creep.upgradeController(creep.room.controller);
                 return;
             }
 
-            var storages: Structure[] = <Structure[]>creep.room.find(FIND_MY_STRUCTURES, {
+            const storages: Structure[] = <Structure[]>creep.room.find(FIND_MY_STRUCTURES, {
                 filter: function (s: Extension) {
-                    return s.structureType == STRUCTURE_EXTENSION
+                    return s.structureType === STRUCTURE_EXTENSION
                         && s.energy < s.energyCapacity;
-                }
+                },
             });
 
-            var spawnNeedEnergy = creep.room.find(FIND_MY_SPAWNS, { filter: function (spawn: Spawn) { return spawn.energy < spawn.energyCapacity; } });
+            const spawnNeedEnergy = creep.room.find(FIND_MY_SPAWNS, { filter: function (spawn: Spawn) { return spawn.energy < spawn.energyCapacity; } });
             storages.push.apply(storages, spawnNeedEnergy);
 
             if (!storages.length) {
@@ -105,18 +114,6 @@ class StarterClaimCreepProcess extends Process {
             }
         }
 
-    }
-    public run(): number {
-        let creep = Game.creeps[this.memory.creepName];
-        if (!creep) {
-            console.log("A creep has disappeared:" + this.memory.creepName);
-            let p = <ClaimProcess>getProcessById(this.parentPID);
-            p.creepDies(this.pid);
-            return this.stop(0);
-        } else {
-            this.runCreep(creep);
-            return 0;
-        }
     }
 }
 export = StarterClaimCreepProcess;

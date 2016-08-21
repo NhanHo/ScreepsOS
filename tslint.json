@@ -1,17 +1,26 @@
 {
-  "extends" : [
-    "tslint:recommended"
-  ],
-  "rules": {
-    "forin": false,
-    "interface-name": [false],
-    "no-console": [false],
-    "variable-name": [
-      true,
-      "ban-keywords",
-      "check-format",
-      "allow-pascal-case",
-      "allow-leading-underscore"
-    ]
-  }
+    "extends" : [
+	"tslint:recommended"
+    ],
+    "rules": {
+	"max-line-length": 80,
+	"forin": false,
+	"interface-name": [false],
+	"no-console": [false],
+	"variable-name": [
+	    true,
+	    "ban-keywords",
+	    "check-format",
+	    "allow-pascal-case",
+	    "allow-leading-underscore"
+	],
+	"curly": false,
+	"semicolon": false,
+	"typedef-whitespace": "nospace",
+	"whitespace": [
+	    false,
+	    "check-typecast"
+	],
+	"object-literal-sort-keys": false
+    }
 }

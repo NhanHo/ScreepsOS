@@ -11,32 +11,6 @@ interface ClaimMemory {
 class ClaimProcess extends Process {
     public memory: ClaimMemory;
     public classPath = "components.processes.room.claim";
-    protected spawnCreep(creepID: string, bodyParts: bodyMap, priority?: number) {
-        //TODO: Check and throw error when there is no roomName
-        let spawnProcess = getSpawnProcess(this.memory.spawningRoomName);
-
-        if (spawnProcess) {
-            spawnProcess.spawn(creepID, bodyParts, this.pid, priority);
-        }
-    }
-
-    private runClaimer() {
-        let claimer = Game.creeps[this.memory.claimerCreep];
-        if (!claimer) {
-            this.spawnCreep("claimer", { MOVE: 1, CLAIM: 1 });
-        } else {
-            let targetRoom = Game.rooms[this.memory.targetRoomName];
-            if (targetRoom) {
-                claimer.moveTo(targetRoom.controller);
-                claimer.claimController(targetRoom.controller);
-                if (targetRoom.controller.my)
-                    claimer.suicide();
-            } else {
-                claimer.moveTo(new RoomPosition(25, 25, this.memory.targetRoomName));
-            }
-        }
-
-    }
 
     public creepDies(pid: number) {
         this.memory.starterCreepPid = _.filter(this.memory.starterCreepPid, p => p !== pid);
@@ -86,7 +60,32 @@ class ClaimProcess extends Process {
         return 0;
     }
 
+    protected spawnCreep(creepID: string, bodyParts: bodyMap, priority?: number) {
+        // TODO: Check and throw error when there is no roomName
+        let spawnProcess = getSpawnProcess(this.memory.spawningRoomName);
 
+        if (spawnProcess) {
+            spawnProcess.spawn(creepID, bodyParts, this.pid, priority);
+        }
+    }
+
+    private runClaimer() {
+        let claimer = Game.creeps[this.memory.claimerCreep];
+        if (!claimer) {
+            this.spawnCreep("claimer", { MOVE: 1, CLAIM: 1 });
+        } else {
+            let targetRoom = Game.rooms[this.memory.targetRoomName];
+            if (targetRoom) {
+                claimer.moveTo(targetRoom.controller);
+                claimer.claimController(targetRoom.controller);
+                if (targetRoom.controller.my)
+                    claimer.suicide();
+            } else {
+                claimer.moveTo(new RoomPosition(25, 25, this.memory.targetRoomName));
+            }
+        }
+
+    }
 }
 
 export = ClaimProcess;

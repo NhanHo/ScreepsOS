@@ -2,7 +2,14 @@ import Process = require("../process");
 import StarterCreepProcess = require("../room/starter-creep");
 import { getProcessById, addProcess, storeProcessTable } from "../../kernel/kernel";
 class StarterProcess extends Process {
-    readonly classPath = "components.processes.room.starter";
+    public static start(roomName: string) {
+        let p = new StarterProcess(0, 0);
+        addProcess(p);
+        p.memory.roomName = roomName;
+        storeProcessTable();
+    }
+
+    public readonly classPath = "components.processes.room.starter";
 
     public getNeededIndex(creepPIDList: number[]): number {
         let process = <StarterCreepProcess[]>_.map(creepPIDList, getProcessById);
@@ -12,25 +19,6 @@ class StarterProcess extends Process {
             return 1;
         return 0;
     }
-
-    private spawnCreep(bodyParts: bodyMap) {
-        var makeBody = function (bodyMap: bodyMap): string[] {
-            let partMap: { [s: string]: string } = {
-                WORK: WORK,
-                MOVE: MOVE,
-                CARRY: CARRY,
-                ATTACK: ATTACK
-            };
-            let replicatePart = function (times: number, part: string) {
-                return _.map(_.times(times, x => x),
-                    () => partMap[part]);
-            };
-            return <string[]>_.chain(bodyMap).map(replicatePart).flatten().value();
-        };
-
-        return Game.spawns["Spawn2"].createCreep(makeBody(bodyParts), undefined);
-    }
-
     public creepDies(childPid: number) {
         this.memory.creepPIDList = _.filter(this.memory.creepPIDList, pid => pid !== childPid);
     };
@@ -44,7 +32,6 @@ class StarterProcess extends Process {
         let multiplier = Math.floor(energyCapacity / 250);
         if (creepList.length < 12) {
             if (creepList.length === 0) {
-                let energyCapacity = room.energyAvailable;
                 multiplier = Math.floor(energyCapacity / 250);
             }
             let result = this.spawnCreep({ WORK: 1 * multiplier, MOVE: 2 * multiplier, CARRY: 1 * multiplier });
@@ -60,11 +47,22 @@ class StarterProcess extends Process {
         return 0;
     }
 
-    public static start(roomName: string) {
-        let p = new StarterProcess(0, 0);
-        addProcess(p);
-        p.memory.roomName = roomName;
-        storeProcessTable();
+    private spawnCreep(bodyParts: bodyMap) {
+        const makeBody = function (bodyMap: bodyMap): string[] {
+            let partMap: { [s: string]: string } = {
+                WORK: WORK,
+                MOVE: MOVE,
+                CARRY: CARRY,
+                ATTACK: ATTACK,
+            };
+            let replicatePart = function (times: number, part: string) {
+                return _.map(_.times(times, x => x),
+                    () => partMap[part]);
+            };
+            return <string[]>_.chain(bodyMap).map(replicatePart).flatten().value();
+        };
+
+        return Game.spawns["Spawn2"].createCreep(makeBody(bodyParts), undefined);
     }
 }
 

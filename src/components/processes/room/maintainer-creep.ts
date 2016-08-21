@@ -12,6 +12,29 @@ export = class MaintainerCreep extends CreepProcess {
     public memory: MaintainerMemory;
     public classPath = "components.processes.room.maintainer-creep";
 
+    public runCreep(creep: Creep): number {
+        let obj = <Structure | ConstructionSite | null>Game.getObjectById(this.memory.targetId);
+        if (!obj) {
+            obj = this.acquireNewTarget();
+            if (obj)
+                this.memory.targetId = obj.id;
+        }
+        if (obj) {
+            if (creep.carry.energy === 0)
+                this.memory.current = GET_ENERGY;
+            if (creep.carry.energy === creep.carryCapacity)
+                this.memory.current = WORKING;
+
+            if (this.memory.current === GET_ENERGY) {
+                this.getEnergy(creep);
+            } else {
+                this.working(creep, obj);
+            }
+        }
+
+        return 0;
+    }
+
     private getLowHealthRampart(room: Room) {
         const ramparts = <Rampart[]>room.find(FIND_STRUCTURES, { filter: (s: Rampart) => s.structureType === STRUCTURE_RAMPART && s.hits < 1000 });
         const rampart = ramparts.pop();
@@ -48,7 +71,6 @@ export = class MaintainerCreep extends CreepProcess {
             creep.withdraw(storage, RESOURCE_ENERGY);
         }
     }
-
     private working(creep: Creep, obj: Structure | ConstructionSite) {
         if (!creep.pos.inRangeTo(obj.pos, 3))
             return creep.moveTo(obj);
@@ -59,25 +81,5 @@ export = class MaintainerCreep extends CreepProcess {
             creep.repair(obj);
         }
     }
-    public runCreep(creep: Creep): number {
-        let obj = <Structure | ConstructionSite | null>Game.getObjectById(this.memory.targetId);
-        if (!obj) {
-            obj = this.acquireNewTarget();
-            if (obj)
-                this.memory.targetId = obj.id;
-        }
-        if (obj) {
-            if (creep.carry.energy === 0)
-                this.memory.current = GET_ENERGY;
-            if (creep.carry.energy === creep.carryCapacity)
-                this.memory.current = WORKING;
 
-            if (this.memory.current === GET_ENERGY)
-                this.getEnergy(creep);
-            else
-                this.working(creep, obj);
-        }
-
-        return 0;
-    }
 }

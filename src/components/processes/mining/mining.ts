@@ -27,8 +27,7 @@ class MiningProcess extends Process {
     public memory: MiningMemory;
     public classPath = "components.processes.mining.mining";
 
-    public minerDies(minerPID: number) {
-        minerPID;
+    public minerDies(_: number) {
         this.memory.minerPid = null;
     }
 
@@ -40,23 +39,9 @@ class MiningProcess extends Process {
     }
     public courierDies(courierPid: number) {
         let memory = this.memory;
-        memory.courierPidList = _.filter(memory.courierPidList, pid => pid != courierPid);
+        memory.courierPidList = _.filter(memory.courierPidList, pid => pid !== courierPid);
     }
 
-    private getMiningSpot(): any {
-        if (!this.memory.miningSpot) {
-            let source = <RoomObject>Game.getObjectById(this.memory.sourceId);
-            if (!source) {
-                source = Game.flags[this.memory.flagName];
-            }
-            let storage = Game.rooms[this.memory.spawningRoomName].storage;
-            let pathResult = PathFinder.search(storage.pos, { pos: source.pos, range: 1 });
-            let path = pathResult.path;
-            let pos = path[path.length - 1];
-            this.memory.miningSpot = [pos.x, pos.y, pos.roomName];
-        }
-        return this.memory.miningSpot;
-    }
     public receiveCreep(id: string, creep: Creep): number {
         let creepName = creep.name;
         if (id === "miner") {
@@ -81,7 +66,7 @@ class MiningProcess extends Process {
         if (id === "courier") {
             let p = new CourierCreep(0, this.pid);
             p = addProcess(p);
-            //TODO: allows different receiver object here
+            // TODO: allows different receiver object here
             p.setUp(creepName, Game.rooms[this.memory.spawningRoomName].storage.id);
             p.parentPID = this.pid;
             this.memory.courierPidList.push(p.pid);
@@ -98,22 +83,12 @@ class MiningProcess extends Process {
         return null;
     }
 
-    protected spawnCreep(creepID: string, bodyParts: bodyMap, priority?: number) {
-        //TODO: Check and throw error when there is no roomName
-        let spawnProcess = getSpawnProcess(this.memory.spawningRoomName);
-
-        if (spawnProcess) {
-            spawnProcess.spawn(creepID, bodyParts, this.pid, priority);
-        }
-    }
-
-
     public needMoreCourier(): number {
         let lastCourierIncrease = this.memory.lastCourierCountChange = this.memory.lastCourierCountChange || (Game.time - 1501);
 
         if (lastCourierIncrease > (Game.time - 1501))
             return -1;
-        if (this.memory.courierCount == 3) {
+        if (this.memory.courierCount === 3) {
             console.log("Mining at source " + this.memory.sourceId +
                 " is requiring too many couriers");
             return -1;
@@ -126,9 +101,9 @@ class MiningProcess extends Process {
     public lowContainerUsage(): number {
         let lastTick = this.memory.lastLowContainerUsage = this.memory.lastLowContainerUsage || Game.time;
         this.memory.lowContainerUsageStreak = this.memory.lowContainerUsageStreak || 0;
-        if (lastTick === (Game.time - 1))
+        if (lastTick === (Game.time - 1)) {
             this.memory.lowContainerUsageStreak += 1;
-        else
+        } else
             this.memory.lowContainerUsageStreak = 0;
 
         if ((this.memory.lowContainerUsageStreak > 750) && (this.memory.courierCount > 1)) {
@@ -145,26 +120,11 @@ class MiningProcess extends Process {
 
         return 0;
     }
-    private invaderCheck() {
-        if (!this.memory.miningSpot)
-            return;
-        let room = Game.rooms[this.memory.miningSpot[2]];
-        if (!room)
-            return;
-        let invaderList = <Creep[]>room.find(FIND_HOSTILE_CREEPS,
-            { filter: c => c.owner.username === "Invader" });
-        let invader = invaderList.pop();
-        if (invader) {
-            if (!room.controller.my)
-                sleepProcess(this, 1500);
-        }
-    }
 
     public run(): number {
         this.memory.courierCount = this.memory.courierCount || 1;
         this.memory.courierPidList = this.memory.courierPidList || [];
         let memory = this.memory;
-
 
         if (!memory.flagName) {
             let source = <Source>Game.getObjectById(memory.sourceId);
@@ -190,9 +150,9 @@ class MiningProcess extends Process {
             this.memory.courierCount = 0;
         }
 
-        if (!memory.minerPid)
+        if (!memory.minerPid) {
             this.spawnCreep("miner", { WORK: 6, MOVE: 6, CARRY: 1 }, 90);
-        else if (memory.courierPidList.length < memory.courierCount) {
+        } else if (memory.courierPidList.length < memory.courierCount) {
             this.spawnCreep("courier", { MOVE: 10, CARRY: 10 });
         }
 
@@ -200,7 +160,44 @@ class MiningProcess extends Process {
         return 0;
     }
 
+    protected spawnCreep(creepID: string, bodyParts: bodyMap, priority?: number) {
+        // TODO: Check and throw error when there is no roomName
+        let spawnProcess = getSpawnProcess(this.memory.spawningRoomName);
 
+        if (spawnProcess) {
+            spawnProcess.spawn(creepID, bodyParts, this.pid, priority);
+        }
+    }
+
+    private getMiningSpot(): any {
+        if (!this.memory.miningSpot) {
+            let source = <RoomObject>Game.getObjectById(this.memory.sourceId);
+            if (!source) {
+                source = Game.flags[this.memory.flagName];
+            }
+            let storage = Game.rooms[this.memory.spawningRoomName].storage;
+            let pathResult = PathFinder.search(storage.pos, { pos: source.pos, range: 1 });
+            let path = pathResult.path;
+            let pos = path[path.length - 1];
+            this.memory.miningSpot = [pos.x, pos.y, pos.roomName];
+        }
+        return this.memory.miningSpot;
+    }
+
+    private invaderCheck() {
+        if (!this.memory.miningSpot)
+            return;
+        let room = Game.rooms[this.memory.miningSpot[2]];
+        if (!room)
+            return;
+        let invaderList = <Creep[]>room.find(FIND_HOSTILE_CREEPS,
+            { filter: c => c.owner.username === "Invader" });
+        let invader = invaderList.pop();
+        if (invader) {
+            if (!room.controller.my)
+                sleepProcess(this, 1500);
+        }
+    }
 }
 
 export = MiningProcess;

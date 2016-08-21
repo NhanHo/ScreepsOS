@@ -17,12 +17,12 @@ export let reboot = function () {
 let getFreePid = function () {
     let currentPids = _.sortBy(_.map(processTable, p => p.pid));
     for (let i = 1; i < currentPids.length; i++) {
-        if (!processTable[i])
+        if (!processTable[i]) {
             return i;
+        }
     }
     return currentPids.length;
 };
-
 
 export let garbageCollection = function () {
     Memory.processMemory = _.pick(Memory.processMemory, (_: any, k: string) => (processTable[k]));
@@ -45,13 +45,13 @@ export let killProcess = function (pid: number) {
     }
     processTable[pid].status = ProcessStatus.DEAD;
     Memory.processMemory[pid] = undefined;
-    //Right now, we will also kill any child process when a process is killed.
-    //TODO : implement it here
+
+    // When a process is killed, we also need to kill all of its child processes
     console.log("Shutting down process with pid:" + pid);
     for (let otherPid in processTable) {
         const process = processTable[pid];
 
-        if ((process.parentPID === parseInt(otherPid)) &&
+        if ((process.parentPID === parseInt(otherPid, 10)) &&
             (process.status !== ProcessStatus.DEAD)) {
             killProcess(process.pid);
         }
@@ -69,11 +69,10 @@ export let getProcessById = function (pid: number): Process {
     return processTable[pid];
 };
 
-
 export let storeProcessTable = function () {
-    let aliveProcess = _.filter(_.values(processTable), (p: Process) => p.status != ProcessStatus.DEAD);
+    let aliveProcess = _.filter(_.values(processTable), (p: Process) => p.status !== ProcessStatus.DEAD);
 
-    Memory["processTable"] = _.map(aliveProcess, (p: Process) => [p.pid, p.parentPID, p.classPath, p.priority]);
+    Memory.processTable = _.map(aliveProcess, (p: Process) => [p.pid, p.parentPID, p.classPath, p.priority]);
 };
 
 export let getProcessMemory = function (pid: number) {
@@ -89,10 +88,12 @@ let runOneQueue = function (queue: Process[]) {
             try {
                 if ((process.status === ProcessStatus.SLEEP) &&
                     ((process.sleepInfo!.start + process.sleepInfo!.duration) > Game.time) &&
-                    (process.sleepInfo!.duration !== -1))
+                    (process.sleepInfo!.duration !== -1)) {
                     process.status = ProcessStatus.ALIVE;
-                if (process.status === ProcessStatus.ALIVE)
+                }
+                if (process.status === ProcessStatus.ALIVE) {
                     process.run();
+                }
             } catch (e) {
                 console.log("Fail to run process:" + process.pid);
                 console.log(e.message);
@@ -113,8 +114,8 @@ declare var require: any;
 
 export let loadProcessTable = function () {
     reboot();
-    Memory["processTable"] = Memory["processTable"] || [];
-    let storedTable = Memory["processTable"];
+    Memory.processTable = Memory.processTable || [];
+    let storedTable = Memory.processTable;
     for (let item of storedTable) {
         let [pid, parentPID, classPath, ...remaining] = item;
         try {
@@ -125,15 +126,19 @@ export let loadProcessTable = function () {
                 priority = remaining[0];
             let p = new processClass(pid, parentPID, priority);
             p.setMemory(memory);
-            //p.reloadFromMemory(getProcessMemory(p));
             processTable[p.pid] = p;
-            //console.log(p);
-            if (priority === ProcessPriority.Ticly)
+
+            if (priority === ProcessPriority.Ticly) {
                 ticlyQueue.push(p);
-            if (priority === ProcessPriority.TiclyLast)
+            }
+
+            if (priority === ProcessPriority.TiclyLast) {
                 ticlyLastQueue.push(p);
-            if (priority === ProcessPriority.LowPriority)
+            }
+
+            if (priority === ProcessPriority.LowPriority) {
                 lowPriorityQueue.push(p);
+            }
         } catch (e) {
             console.log("Error when loading:" + e.message);
             console.log(classPath);

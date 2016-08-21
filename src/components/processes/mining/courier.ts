@@ -4,17 +4,12 @@ import { getProcessById } from "../../kernel/kernel";
 class CourierProcess extends Process {
     public classPath = "components.processes.mining.courier";
 
-    private getNewMinerCreep(): Creep | null {
-        let p: MiningProcess = <MiningProcess>getProcessById(this.parentPID);
-        return p.getMinerCreep();
-    }
-
     public run(): number {
         let memory = this.memory;
         let name = memory.name;
-        if (name && Game.creeps[name])
+        if (name && Game.creeps[name]) {
             this.runCreep(name);
-        else {
+        } else {
             let p: any = getProcessById(this.parentPID);
             if (p)
                 p.courierDies(this.pid);
@@ -31,7 +26,6 @@ class CourierProcess extends Process {
         let memory = this.memory;
         let creep = Game.creeps[creepName];
         let minerCreep: Creep | null = Game.creeps[memory.minerName];
-        console.log("Here");
 
         if (!minerCreep) {
             memory.minerName = null;
@@ -60,11 +54,13 @@ class CourierProcess extends Process {
 
             }
         }
-
-
         return 0;
     }
 
+    private getNewMinerCreep(): Creep | null {
+        let p: MiningProcess = <MiningProcess>getProcessById(this.parentPID);
+        return p.getMinerCreep();
+    }
 }
 
 export = CourierProcess;

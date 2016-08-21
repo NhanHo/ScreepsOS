@@ -2,18 +2,26 @@ import Process = require("../process");
 import { getSpawnProcess } from "../../kernel/kernel-utils";
 import { addProcess, getProcessById } from "../../kernel/kernel";
 class UpgraderProcess extends Process {
+    public static start(roomName: string, parentPID: number) {
+        let p = new UpgraderProcess(0, parentPID);
+        addProcess(p);
+        p.memory.roomName = roomName;
+        return p.pid;
+    }
+
     public classPath = "components.processes.room.upgrader";
     public run(): number {
-	let colonyProcess = getProcessById(this.parentPID);
-	if (!colonyProcess)
-	    return this.stop(0);
-	
+        let colonyProcess = getProcessById(this.parentPID);
+        if (!colonyProcess)
+            return this.stop(0);
+
         let memory = this.memory;
         let upgraderName = memory.name;
-        if (upgraderName && Game.creeps[upgraderName])
+        if (upgraderName && Game.creeps[upgraderName]) {
             this.runCreep(upgraderName);
-        else
+        } else {
             this.spawnCreep();
+        }
         return 0;
     }
 
@@ -32,6 +40,10 @@ class UpgraderProcess extends Process {
         }
         return 0;
     }
+    public receiveCreep(id: string, creep: Creep) {
+        if (id === "upgrader")
+            this.memory.name = creep.name;
+    }
 
     private spawnCreep() {
         let roomName = this.memory.roomName;
@@ -43,18 +55,6 @@ class UpgraderProcess extends Process {
             spawnProcess.spawn("upgrader", { CARRY: 1, WORK: 2 * multiplier, MOVE: multiplier },
                 this.pid);
         }
-    }
-
-    public receiveCreep(id: string, creep: Creep) {
-        if (id === "upgrader")
-            this.memory.name = creep.name;
-    }
-
-    public static start(roomName: string, parentPID: number) {
-        let p = new UpgraderProcess(0, parentPID);
-        addProcess(p);
-        p.memory.roomName = roomName;
-        return p.pid;
     }
 }
 

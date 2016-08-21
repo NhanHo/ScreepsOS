@@ -7,6 +7,6 @@ export = class ConstructionProcess extends Process {
     }
 
     public requestBuilding() {
-
+        return null;
     }
 }

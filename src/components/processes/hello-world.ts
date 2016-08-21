@@ -1,9 +1,15 @@
 import { addProcess, storeProcessTable } from "../kernel/kernel";
 import Process = require("./process");
 class HelloWorldProcess extends Process {
-    status: number;
-    className: string;
-    readonly classPath: string = "components.process.hello-world";
+    public static startNewCounter() {
+        let p = new HelloWorldProcess(0, 0);
+        addProcess(p);
+        storeProcessTable();
+    }
+
+    public status: number;
+    public className: string;
+    public readonly classPath: string = "components.process.hello-world";
     public pid: number;
     public parentPID: number;
 
@@ -15,14 +21,6 @@ class HelloWorldProcess extends Process {
         return 0;
     }
 
-    public static startNewCounter() {
-        let p = new HelloWorldProcess(0, 0);
-        addProcess(p);
-        storeProcessTable();
-    }
-
-    //public reloadFromMemory(memory: any) { memory; };
 }
 
 export = HelloWorldProcess;
-

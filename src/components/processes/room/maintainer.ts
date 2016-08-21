@@ -6,6 +6,15 @@ interface MaintainerMemory extends OvermindMemory {
     childPidList: number[];
 }
 export = class MaintainerProcess extends OvermindProcess {
+    public static start(roomName: string, parentPID: number) {
+        let p = new MaintainerProcess(0, parentPID);
+        MaintainerProcess.addProcess(p);
+        p.memory.spawningRoomName = roomName;
+        p.memory.roomName = roomName;
+        p.memory.childPidList = [];
+        return p.pid;
+    }
+
     public classPath = "components.processes.room.maintainer";
     public memory: MaintainerMemory;
     public creepDies(__: string, pid: number) {
@@ -32,14 +41,5 @@ export = class MaintainerProcess extends OvermindProcess {
             this.spawnCreep("maintainer", { MOVE: multiplier + 5, CARRY: multiplier, WORK: 5 });
         }
         return 0;
-    }
-
-    public static start(roomName: string, parentPID: number) {
-        let p = new MaintainerProcess(0, parentPID);
-        MaintainerProcess.addProcess(p);
-        p.memory.spawningRoomName = roomName;
-        p.memory.roomName = roomName;
-        p.memory.childPidList = [];
-        return p.pid;
     }
 }

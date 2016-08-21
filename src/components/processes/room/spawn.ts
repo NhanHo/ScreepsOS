@@ -8,24 +8,17 @@ interface CreepRequest {
     priority: number;
 }
 class SpawnProcess extends Process {
+    public static start(roomName: string, parentPID: number) {
+        let p = new SpawnProcess(0, parentPID);
+        p = addProcess(p, ProcessPriority.TiclyLast);
+        p.memory.roomName = roomName;
+        return p;
+    }
+
     public classPath = "components.processes.room.spawn";
     public getRoomName() {
         return this.memory.roomName;
     }
-    private findFreeSpawn(roomName: string) {
-        let spawns = _.filter(Game.spawns,
-            function (spawn) {
-                return spawn.room.name == roomName &&
-                    spawn.spawning == null &&
-                    spawn.canCreateCreep([MOVE]) === OK &&
-                    spawn.isActive();
-            });
-        if (spawns.length > 0)
-            return spawns[0];
-        return null;
-    };
-
-
     public spawn(id: string, bodyMap: bodyMap, pid: number, priority = 10): number {
         let memory = this.memory;
         let existing = _.find(<CreepRequest[]>memory.requestList, r => (r.creepID === id) && (r.pid === pid));
@@ -46,14 +39,14 @@ class SpawnProcess extends Process {
         let roomName = this.memory.roomName;
         if (!roomName)
             return this.stop(0);
-        var makeBody = function (bodyMap: bodyMap): string[] {
-            //TODO : Fix the part map, this need to include all part type somehow
+        const makeBody = function (bodyMap: bodyMap): string[] {
+            // TODO : Fix the part map, this need to include all part type somehow
             let partMap: { [s: string]: string } = {
                 WORK: WORK,
                 MOVE: MOVE,
                 CARRY: CARRY,
                 ATTACK: ATTACK,
-                CLAIM: CLAIM
+                CLAIM: CLAIM,
             };
             let replicatePart = function (times: number, part: string) {
                 return _.map(_.times(times, x => x),
@@ -79,12 +72,18 @@ class SpawnProcess extends Process {
 
     }
 
-    public static start(roomName: string, parentPID: number) {
-        let p = new SpawnProcess(0, parentPID);
-        p = addProcess(p, ProcessPriority.TiclyLast);
-        p.memory.roomName = roomName;
-        return p;
-    }
+    private findFreeSpawn(roomName: string) {
+        let spawns = _.filter(Game.spawns,
+            function (spawn) {
+                return spawn.room.name === roomName &&
+                    spawn.spawning == null &&
+                    spawn.canCreateCreep([MOVE]) === OK &&
+                    spawn.isActive();
+            });
+        if (spawns.length > 0)
+            return spawns[0];
+        return null;
+    };
 }
 
 export = SpawnProcess;

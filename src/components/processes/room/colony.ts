@@ -6,9 +6,8 @@ import LibrarianProcess = require("./librarian");
 import UpgraderProcess = require("./upgrader");
 import DefenseProcess = require("./defense");
 import MaintainerProcess = require("./maintainer");
-//import BuilderPlannerProcess = require("./building-planner");
+// import BuilderPlannerProcess = require("./building-planner");
 class ColonyProcess extends Process {
-    public classPath = "components.processes.room.colony";
     public static start(roomName: string) {
         let p = new ColonyProcess(0, 0);
         addProcess(p);
@@ -17,29 +16,23 @@ class ColonyProcess extends Process {
         p.memory.roomName = roomName;
         console.log("New room started:" + roomName);
     }
+
+    public classPath = "components.processes.room.colony";
+
     public getRoomName() {
         return this.memory.roomName;
     }
 
-    private launchSpawnProcess(roomName: string) {
-        console.log("Starting spawn process for room:" + roomName);
-        let p = SpawnProcess.start(roomName, this.pid);
-        p.parentPID = this.pid;
-        return p.pid;
-    }
     public run(): number {
         let memory = this.memory;
         let room = Game.rooms[memory.roomName];
 
-        //let buildingPlannerPID = memory.buildingPlannerPID;
-        //if (!buildingPlannerPID || !getProcessById(buildingPlannerPID))
-        //    memory.buildingPlannerPID = BuilderPlannerProcess.start(room.name).pid;
         let spawnPID = memory.spawnPID;
         if (!spawnPID || !getProcessById(spawnPID)) {
             memory.spawnPID = this.launchSpawnProcess(room.name);
         }
 
-        if (room.controller.level >= 4 && room.storage && room.storage.store.energy > 40000) {
+        if (room.controller.level >= 4 && room.storage && room.storage.store.energy > 10000) {
 
             let upgraderPID = memory.upgraderPID;
 
@@ -71,6 +64,12 @@ class ColonyProcess extends Process {
         return 0;
     }
 
+    private launchSpawnProcess(roomName: string) {
+        console.log("Starting spawn process for room:" + roomName);
+        let p = SpawnProcess.start(roomName, this.pid);
+        p.parentPID = this.pid;
+        return p.pid;
+    }
 }
 
 export = ColonyProcess;

@@ -4,17 +4,18 @@ import { ProcessStatus } from "./process-status";
 import { ProcessSleep } from "../../typings/process-sleep.d.ts";
 abstract class Process {
     public status: number;
-    abstract run(): number;
     public classPath: string;
     public sleepInfo?: ProcessSleep;
     public priority: ProcessPriority;
-    memory: any;
+    public memory: any;
+
     constructor(public pid: number, public parentPID: number, priority = ProcessPriority.LowPriority) {
         this.status = ProcessStatus.ALIVE;
         this.priority = priority;
     };
 
-    setMemory(memory: any): void {
+    public abstract run(): number;
+    public setMemory(memory: any): void {
         this.memory = memory;
     };
 
@@ -27,8 +28,6 @@ abstract class Process {
         killProcess(this.pid);
         return signal;
     }
-
-
 }
 
 export = Process;

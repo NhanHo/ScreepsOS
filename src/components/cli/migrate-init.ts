@@ -11,15 +11,14 @@ export = function (___: any) {
     } else {
         addProcess(pidZero);
         let newPid = pidZero.pid;
-        let processList: Process[] = <Process[]>_.values(processTable);
+        let processList: Process[] = _.values(processTable) as Process[];
         for (let process of processList) {
-            if (process.parentPID === 0)
+            if (process.parentPID === 0) {
                 process.parentPID = newPid;
+            }
         }
         delete (processTable[0]);
         addProcess(p);
         storeProcessTable();
-
     }
-
-}
+};

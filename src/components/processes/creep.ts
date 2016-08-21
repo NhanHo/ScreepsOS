@@ -4,7 +4,6 @@ import { getProcessById } from "../kernel/kernel";
 import OvermindProcess = require("./overmind");
 abstract class CreepProcess extends Process {
     public memory: CreepMemory;
-    abstract runCreep(creep: Creep): number;
     public run(): number {
         let creep = Game.creeps[this.memory.creepName];
 
@@ -21,6 +20,7 @@ abstract class CreepProcess extends Process {
         }
     }
 
+    protected abstract runCreep(creep: Creep): number;
 }
 
 export = CreepProcess;

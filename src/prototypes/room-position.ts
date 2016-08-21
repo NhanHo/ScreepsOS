@@ -6,12 +6,12 @@ let loadRoomPrototype = function () {
         for (let i = 0; i < 8; i = i + 1) {
             let x = this.x + dx[i];
             let y = this.y + dy[i];
-            if (x >= 0 && x <= 49 && y >= 0 && y <= 49)
+            if (x >= 0 && x <= 49 && y >= 0 && y <= 49) {
                 result.push(new RoomPosition(x, y, this.roomName));
-
+            }
         }
         return result;
-    }
+    };
 };
 
 export = loadRoomPrototype;
