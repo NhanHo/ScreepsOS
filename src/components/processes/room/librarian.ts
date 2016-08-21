@@ -33,7 +33,7 @@ class LibrarianProcess extends Process {
                 if (!creep.pos.isNearTo(storage))
                     creep.moveTo(storage);
                 else {
-                    storage.transfer(creep, RESOURCE_ENERGY);
+                    creep.withdraw(storage, RESOURCE_ENERGY);
                 }
             }
         } else {
@@ -90,10 +90,10 @@ class LibrarianProcess extends Process {
     }
 
     public run(): number {
-	let colonyProcess = getProcessById(this.parentPID);
-	if (!colonyProcess)
-	    return this.stop(0);
-	
+        let colonyProcess = getProcessById(this.parentPID);
+        if (!colonyProcess)
+            return this.stop(0);
+
         let memory = this.memory;
         let smallCreepName = memory.smallCreepName;
         let creepName = memory.creepName;
