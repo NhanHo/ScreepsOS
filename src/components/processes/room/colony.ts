@@ -5,6 +5,7 @@ import { addProcess } from "../../kernel/kernel";
 import LibrarianProcess = require("./librarian");
 import UpgraderProcess = require("./upgrader");
 import DefenseProcess = require("./defense");
+import MaintainerProcess = require("./maintainer");
 //import BuilderPlannerProcess = require("./building-planner");
 class ColonyProcess extends Process {
     public classPath = "components.processes.room.colony";
@@ -58,6 +59,12 @@ class ColonyProcess extends Process {
             if (!defenderPID || !getProcessById(defenderPID)) {
                 console.log("Starting defender process for Room:" + room.name);
                 memory.defenderPID = DefenseProcess.start(memory.roomName, this.pid);
+            }
+
+            let maintainerPID = memory.maintainerPID;
+            if (!maintainerPID || !getProcessById(maintainerPID)) {
+                console.log("Starting maintainer process for room:" + room.name);
+                memory.maintainerPID = MaintainerProcess.start(memory.roomName, this.pid);
             }
         }
         return 0;

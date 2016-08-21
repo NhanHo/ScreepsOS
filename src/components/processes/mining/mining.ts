@@ -138,6 +138,8 @@ class MiningProcess extends Process {
         if (!this.memory.miningSpot)
             return;
         let room = Game.rooms[this.memory.miningSpot[2]];
+        if (!room)
+            return;
         let invaderList = <Creep[]>room.find(FIND_HOSTILE_CREEPS,
             { filter: c => c.owner.username === "Invader" });
         let invader = invaderList.pop();

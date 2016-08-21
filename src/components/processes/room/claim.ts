@@ -75,7 +75,7 @@ class ClaimProcess extends Process {
         } else {
             this.memory.starterCreepPid = this.memory.starterCreepPid || [];
             let starterPid = this.memory.starterCreepPid;
-            if (starterPid.length < 4) {
+            if (starterPid.length < 6) {
                 let spawningRoom = Game.rooms[this.memory.spawningRoomName];
                 let energyCapacity = spawningRoom.energyCapacityAvailable;
                 let multiplier = Math.floor(energyCapacity / 250);

@@ -77,7 +77,8 @@ let runOneQueue = function (queue: Process[]) {
         while (process) {
             try {
                 if ((process.status === ProcessStatus.SLEEP) &&
-                    ((process.sleepInfo!.start + process.sleepInfo!.duration) > Game.time))
+                    ((process.sleepInfo!.start + process.sleepInfo!.duration) > Game.time) &&
+                    (process.sleepInfo!.duration !== -1))
                     process.status = ProcessStatus.ALIVE;
                 if (process.status === ProcessStatus.ALIVE)
                     process.run();

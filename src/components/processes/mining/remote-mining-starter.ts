@@ -42,6 +42,7 @@ class RemoteMiningStarter extends OvermindProcess {
         }
     }
 
+    public creepDies() { };
     public receiveCreep(creepID: string, creep: Creep) {
         if (creepID === "scout") {
             this.memory.scout = creep.name;
