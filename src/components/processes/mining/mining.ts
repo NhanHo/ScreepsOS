@@ -1,5 +1,6 @@
 import Process = require("../process");
 import MinerCreep = require("./miner-creep");
+import MinerWithLinkCreep = require("./miner-with-link-creep");
 import CourierCreep = require("./courier");
 import { addProcess, getProcessById, sleepProcess } from "../../kernel/kernel";
 import { getSpawnProcess } from "../../kernel/kernel-utils";
@@ -59,12 +60,22 @@ class MiningProcess extends Process {
     public receiveCreep(id: string, creep: Creep): number {
         let creepName = creep.name;
         if (id === "miner") {
-            let p = new MinerCreep(0, this.pid);
-            p = addProcess(p);
-            p.setUp(creepName, this.memory.sourceId);
-            p.parentPID = this.pid;
-            this.memory.minerPid = p.pid;
-            p.memory.miningSpot = this.getMiningSpot();
+
+            const [x, y, roomName] = this.memory.miningSpot;
+            const pos = new RoomPosition(x, y, roomName);
+            const storage = Game.rooms[this.memory.spawningRoomName].storage;
+            if (pos.isNearTo(storage)) {
+                let p = new MinerWithLinkCreep(0, this.pid);
+                p = addProcess(p);
+                p.setUp(creepName, this.memory.sourceId, this.memory.miningSpot);
+                this.memory.minerPid = p.pid;
+            } else {
+                let p = new MinerCreep(0, this.pid);
+                p = addProcess(p);
+                p.setUp(creepName, this.memory.sourceId);
+                this.memory.minerPid = p.pid;
+                p.memory.miningSpot = this.getMiningSpot();
+            }
         }
 
         if (id === "courier") {
@@ -153,10 +164,8 @@ class MiningProcess extends Process {
         this.memory.courierCount = this.memory.courierCount || 1;
         this.memory.courierPidList = this.memory.courierPidList || [];
         let memory = this.memory;
-        if (!memory.spawningRoomName) {
-            memory.spawningRoomName = memory["roomName"];
-            memory["roomName"] = undefined;
-        }
+
+
         if (!memory.flagName) {
             let source = <Source>Game.getObjectById(memory.sourceId);
             if (!source) {
@@ -171,6 +180,16 @@ class MiningProcess extends Process {
                 return 0;
             }
         }
+        if (!memory.miningSpot)
+            memory.miningSpot = this.getMiningSpot();
+        const [x, y, roomName] = this.memory.miningSpot;
+        const miningPos = new RoomPosition(x, y, roomName);
+        let storage = Game.rooms[this.memory.spawningRoomName].storage;
+
+        if (miningPos.isNearTo(storage.pos)) {
+            this.memory.courierCount = 0;
+        }
+
         if (!memory.minerPid)
             this.spawnCreep("miner", { WORK: 6, MOVE: 6, CARRY: 1 }, 90);
         else if (memory.courierPidList.length < memory.courierCount) {
