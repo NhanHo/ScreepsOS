@@ -25,11 +25,11 @@ export = class MaintainerProcess extends OvermindProcess {
 
     public run(): number {
         this.memory.childPidList = this.memory.childPidList || [];
-        if (this.memory.childPidList.length < 1) {
+        if (this.memory.childPidList.length < 2) {
             const room = Game.rooms[this.memory.spawningRoomName];
-            const energyCapacity = room.energyCapacityAvailable;
-            const multiplier = Math.floor(energyCapacity / (100 + 50 + 50));
-            this.spawnCreep("maintainer", { MOVE: multiplier, CARRY: multiplier, WORK: multiplier });
+            const energyCapacity = room.energyCapacityAvailable - 500 - 250;
+            const multiplier = Math.floor(energyCapacity / (50 + 50));
+            this.spawnCreep("maintainer", { MOVE: multiplier + 5, CARRY: multiplier, WORK: 5 });
         }
         return 0;
     }

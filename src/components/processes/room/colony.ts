@@ -10,21 +10,15 @@ import MaintainerProcess = require("./maintainer");
 class ColonyProcess extends Process {
     public classPath = "components.processes.room.colony";
     public static start(roomName: string) {
-        let p: Process = new ColonyProcess(0, 0);
-        p = addProcess(p);
+        console.log("Starting room:" + roomName);
+        let p = new ColonyProcess(0, 0);
+        addProcess(p);
         p.memory.roomName = roomName;
+        p.memory.spawnPID = p.launchSpawnProcess(roomName);
 
-        let spawnProcess = new SpawnProcess(0, 0);
-        addProcess(spawnProcess);
-        spawnProcess.memory.roomName = roomName;
-        p.memory.spawnPID = spawnProcess.pid;
-
-        p = new LibrarianProcess(0, 0);
-        p = addProcess(p);
-        p.memory.roomName = roomName;
         storeProcessTable();
 
-
+        console.log("New room started:" + roomName);
     }
     public getRoomName() {
         return this.memory.roomName;
@@ -41,12 +35,12 @@ class ColonyProcess extends Process {
         //let buildingPlannerPID = memory.buildingPlannerPID;
         //if (!buildingPlannerPID || !getProcessById(buildingPlannerPID))
         //    memory.buildingPlannerPID = BuilderPlannerProcess.start(room.name).pid;
+        let spawnPID = memory.spawnPID;
+        if (!spawnPID || !getProcessById(spawnPID)) {
+            memory.spawnPID = this.launchSpawnProcess(room.name);
+        }
 
         if (room.controller.level >= 4 && room.storage && room.storage.store.energy > 40000) {
-            let spawnPID = memory.spawnPID;
-            if (!spawnPID || !getProcessById(spawnPID)) {
-                memory.spawnPID = this.launchSpawnProcess(room.name);
-            }
 
             let upgraderPID = memory.upgraderPID;
 
@@ -72,6 +66,7 @@ class ColonyProcess extends Process {
                 const p = new LibrarianProcess(0, this.pid);
                 addProcess(p);
                 p.memory.roomName = room.name;
+                memory.librarianPID = p.pid;
             }
         }
         return 0;
