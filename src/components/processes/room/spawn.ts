@@ -43,6 +43,9 @@ class SpawnProcess extends Process {
         if (!colonyProcess)
             return this.stop(0);
 
+        let roomName = this.memory.roomName;
+        if (!roomName)
+            return this.stop(0);
         var makeBody = function (bodyMap: bodyMap): string[] {
             //TODO : Fix the part map, this need to include all part type somehow
             let partMap: { [s: string]: string } = {
@@ -63,10 +66,9 @@ class SpawnProcess extends Process {
         memory.requestList = memory.requestList || [];
         memory.requestList = _.sortBy(<CreepRequest[]>memory.requestList, i => i.priority);
         let request: CreepRequest = memory.requestList.pop();
-
         let spawn = this.findFreeSpawn(this.memory.roomName);
-        if (request) {
 
+        if (request) {
             if (spawn && spawn.canCreateCreep(makeBody(request.bodyParts)) === OK) {
                 let process: any = getProcessById(request.pid);
                 let creepName = spawn.createCreep(makeBody(request.bodyParts));
@@ -77,9 +79,10 @@ class SpawnProcess extends Process {
 
     }
 
-    public static start(parentPID: number) {
+    public static start(roomName: string, parentPID: number) {
         let p = new SpawnProcess(0, parentPID);
         p = addProcess(p, ProcessPriority.TiclyLast);
+        p.memory.roomName = roomName;
         return p;
     }
 }
