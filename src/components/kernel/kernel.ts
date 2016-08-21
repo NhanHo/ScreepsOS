@@ -16,11 +16,9 @@ export let reboot = function () {
 
 let getFreePid = function () {
     let currentPids = _.sortBy(_.map(processTable, p => p.pid));
-    let counter = 0;
-    for (let pid of currentPids) {
-        counter += 1;
-        if (pid !== counter)
-            return counter;
+    for (let i = 1; i < currentPids.length; i++) {
+        if (!processTable[i])
+            return i;
     }
     return currentPids.length;
 };
@@ -36,6 +34,7 @@ export let addProcess = function <T extends Process>(p: T, priority = ProcessPri
     processTable[p.pid] = p;
     Memory.processMemory[pid] = {};
     p.setMemory(getProcessMemory(pid));
+    p.status = ProcessStatus.ALIVE;
     return p;
 };
 
