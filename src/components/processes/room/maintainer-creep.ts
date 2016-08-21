@@ -12,14 +12,31 @@ export = class MaintainerCreep extends CreepProcess {
     public memory: MaintainerMemory;
     public classPath = "components.processes.room.maintainer-creep";
 
-    private acquireNewTarget(): RoomObject | null {
+    private getLowHealthRampart(room: Room) {
+        const ramparts = <Rampart[]>room.find(FIND_STRUCTURES, { filter: (s: Rampart) => s.structureType === STRUCTURE_RAMPART && s.hits < 1000 });
+        const rampart = ramparts.pop();
+        if (rampart)
+            return rampart;
+        return null;
+    }
+    private acquireNewTarget(): Structure | ConstructionSite | null {
         let room = Game.rooms[this.memory.roomName];
+
+        let lowHealthRampart = this.getLowHealthRampart(room);
+        if (lowHealthRampart) {
+            return lowHealthRampart;
+        }
         const constructions = <ConstructionSite[]>room.find(FIND_CONSTRUCTION_SITES);
         const construction = constructions.pop();
         if (construction) {
-            this.memory.targetId = construction.id;
             return construction;
         }
+
+        const structures = <Structure[]>room.find(FIND_CONSTRUCTION_SITES, { filter: (s: Structure) => ((s.structureType === STRUCTURE_RAMPART) || (s.structureType === STRUCTURE_WALL)) });
+        const sorted = _.sortBy(structures, s => s.hits);
+        const s = sorted.pop();
+        if (s)
+            return s;
         return null;
     }
 
@@ -32,19 +49,23 @@ export = class MaintainerCreep extends CreepProcess {
         }
     }
 
-    private working(creep: Creep, obj: RoomObject) {
-        if (obj instanceof ConstructionSite) {
-            if (!creep.pos.inRangeTo(obj.pos, 3))
-                return creep.moveTo(obj);
+    private working(creep: Creep, obj: Structure | ConstructionSite) {
+        if (!creep.pos.inRangeTo(obj.pos, 3))
+            return creep.moveTo(obj);
 
+        if (obj instanceof ConstructionSite) {
             creep.build(obj);
+        } else {
+            creep.repair(obj);
         }
     }
     public runCreep(creep: Creep): number {
-        let obj: RoomObject | null = <RoomObject | null>Game.getObjectById(this.memory.targetId);
-        if (!obj)
+        let obj = <Structure | ConstructionSite | null>Game.getObjectById(this.memory.targetId);
+        if (!obj) {
             obj = this.acquireNewTarget();
-
+            if (obj)
+                this.memory.targetId = obj.id;
+        }
         if (obj) {
             if (creep.carry.energy === 0)
                 this.memory.current = GET_ENERGY;
