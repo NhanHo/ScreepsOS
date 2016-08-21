@@ -30,8 +30,8 @@ class ColonyProcess extends Process {
         return this.memory.roomName;
     }
 
-    private launchSpawnProcess() {
-        let p = SpawnProcess.start(this.pid);
+    private launchSpawnProcess(roomName: string) {
+        let p = SpawnProcess.start(roomName, this.pid);
         return p.pid;
     }
     public run(): number {
@@ -45,7 +45,7 @@ class ColonyProcess extends Process {
         if (room.controller.level >= 4 && room.storage && room.storage.store.energy > 40000) {
             let spawnPID = memory.spawnPID;
             if (!spawnPID || !getProcessById(spawnPID)) {
-                memory.spawnPID = this.launchSpawnProcess();
+                memory.spawnPID = this.launchSpawnProcess(room.name);
             }
 
             let upgraderPID = memory.upgraderPID;
@@ -65,6 +65,13 @@ class ColonyProcess extends Process {
             if (!maintainerPID || !getProcessById(maintainerPID)) {
                 console.log("Starting maintainer process for room:" + room.name);
                 memory.maintainerPID = MaintainerProcess.start(memory.roomName, this.pid);
+            }
+
+            let librarianPID = memory.librarianPID;
+            if (!librarianPID || !getProcessById(librarianPID)) {
+                const p = new LibrarianProcess(0, this.pid);
+                addProcess(p);
+                p.memory.roomName = room.name;
             }
         }
         return 0;
