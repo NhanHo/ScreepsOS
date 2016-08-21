@@ -16,7 +16,7 @@ export let reboot = function () {
 
 let getFreePid = function () {
     let currentPids = _.sortBy(_.map(processTable, p => p.pid));
-    let counter = -1;
+    let counter = 0;
     for (let pid of currentPids) {
         counter += 1;
         if (pid !== counter)
@@ -44,7 +44,12 @@ export let killProcess = function (pid: number) {
     Memory.processMemory[pid] = undefined;
     //Right now, we will also kill any child process when a process is killed.
     //TODO : implement it here
-
+    console.log("Shutting down process with pid:" + pid);
+    for (let pid in processTable) {
+        const process = processTable[pid];
+        if (process.parentPID == parseInt(pid))
+            killProcess(process.pid);
+    }
     return pid;
 };
 
