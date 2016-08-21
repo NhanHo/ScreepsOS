@@ -13,6 +13,13 @@ export = class MaintainerCreep extends CreepProcess {
     public classPath = "components.processes.room.maintainer-creep";
 
     private acquireNewTarget(): RoomObject | null {
+        let room = Game.rooms[this.memory.roomName];
+        const constructions = <ConstructionSite[]>room.find(FIND_CONSTRUCTION_SITES);
+        const construction = constructions.pop();
+        if (construction) {
+            this.memory.targetId = construction.id;
+            return construction;
+        }
         return null;
     }
 

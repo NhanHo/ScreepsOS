@@ -160,7 +160,8 @@ class MiningProcess extends Process {
         if (!memory.flagName) {
             let source = <Source>Game.getObjectById(memory.sourceId);
             if (!source) {
-                console.log("Error: no vision of source and no flag for source " + memory.sourceId);
+                console.log("PID: " + this.pid +
+                    " Error: no vision of source and no flag for source: " + memory.sourceId);
                 return 0;
             }
             let result = source.pos.createFlag(source.id, COLOR_YELLOW);
