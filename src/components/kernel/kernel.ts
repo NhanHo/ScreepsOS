@@ -39,15 +39,22 @@ export let addProcess = function <T extends Process>(p: T, priority = ProcessPri
 };
 
 export let killProcess = function (pid: number) {
+    if (pid === 0) {
+        console.log("ABORT! ABORT! Why are you trying to kill init?!");
+        return -1;
+    }
     processTable[pid].status = ProcessStatus.DEAD;
     Memory.processMemory[pid] = undefined;
     //Right now, we will also kill any child process when a process is killed.
     //TODO : implement it here
     console.log("Shutting down process with pid:" + pid);
-    for (let pid in processTable) {
+    for (let otherPid in processTable) {
         const process = processTable[pid];
-        if (process.parentPID == parseInt(pid))
+
+        if ((process.parentPID === parseInt(otherPid)) &&
+            (process.status !== ProcessStatus.DEAD)) {
             killProcess(process.pid);
+        }
     }
     return pid;
 };

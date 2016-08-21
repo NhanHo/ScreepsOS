@@ -24,6 +24,7 @@ class ColonyProcess extends Process {
     private launchSpawnProcess(roomName: string) {
         console.log("Starting spawn process for room:" + roomName);
         let p = SpawnProcess.start(roomName, this.pid);
+        p.parentPID = this.pid;
         return p.pid;
     }
     public run(): number {
