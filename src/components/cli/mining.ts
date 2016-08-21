@@ -6,7 +6,7 @@ let addProcessAndSave = function (p: Process) {
     storeProcessTable();
 }
 
-export let startRoomMining = function (roomName: string) {
+/*let startRoomMining = function (roomName: string) {
     let room = Game.rooms[roomName];
     let sources = room.find(FIND_SOURCES) as Source[];
 
@@ -17,4 +17,23 @@ export let startRoomMining = function (roomName: string) {
     }
 
 }
-    ;
+;*/
+
+export = function (argv: string[]) {
+    let sourceId = argv[0];
+    let roomName = argv[1];
+    let flag = Game.flags[sourceId];
+    let source = <Source>Game.getObjectById(sourceId);
+    if (!source) {
+        console.log("Can't find source");
+    }
+    if (!flag) {
+        source.pos.createFlag(sourceId, COLOR_YELLOW);
+    }
+
+    let p = new MiningProcess(0, 0);
+    addProcessAndSave(p);
+    p.memory.sourceId = sourceId;
+    p.memory.spawningRoomName = roomName;
+    p.memory.flagName = sourceId;
+}
