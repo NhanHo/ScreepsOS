@@ -10,14 +10,11 @@ import MaintainerProcess = require("./maintainer");
 class ColonyProcess extends Process {
     public classPath = "components.processes.room.colony";
     public static start(roomName: string) {
-        console.log("Starting room:" + roomName);
         let p = new ColonyProcess(0, 0);
         addProcess(p);
-        p.memory.roomName = roomName;
-        p.memory.spawnPID = p.launchSpawnProcess(roomName);
-
         storeProcessTable();
 
+        p.memory.roomName = roomName;
         console.log("New room started:" + roomName);
     }
     public getRoomName() {
@@ -25,6 +22,7 @@ class ColonyProcess extends Process {
     }
 
     private launchSpawnProcess(roomName: string) {
+        console.log("Starting spawn process for room:" + roomName);
         let p = SpawnProcess.start(roomName, this.pid);
         return p.pid;
     }

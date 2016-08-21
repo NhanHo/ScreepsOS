@@ -31,6 +31,8 @@ class CourierProcess extends Process {
         let memory = this.memory;
         let creep = Game.creeps[creepName];
         let minerCreep: Creep | null = Game.creeps[memory.minerName];
+        console.log("Here");
+
         if (!minerCreep) {
             memory.minerName = null;
             minerCreep = this.getNewMinerCreep();
@@ -45,13 +47,15 @@ class CourierProcess extends Process {
         } else {
             if (minerCreep) {
                 creep.moveTo(minerCreep);
-                if (minerCreep.carry.energy === minerCreep.carryCapacity)
+                if (_.sum(minerCreep.carry) >= 0.9 * minerCreep.carryCapacity)
                     minerCreep.transfer(creep, RESOURCE_ENERGY);
                 let containerList = <Container[]>minerCreep.pos.lookFor(STRUCTURE_CONTAINER);
                 if (containerList.length) {
                     let container = containerList[0];
-                    if (_.sum(container.store) > 200)
-                        container.transfer(creep, RESOURCE_ENERGY);
+                    if (_.sum(container.store) > 200) {
+
+                        creep.withdraw(container, RESOURCE_ENERGY);
+                    }
                 }
 
             }
