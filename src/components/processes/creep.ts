@@ -10,8 +10,10 @@ abstract class CreepProcess extends Process {
 
         if (!creep) {
             console.log("A creep has disappeared:" + this.memory.creepName);
-            let p = <OvermindProcess>getProcessById(this.parentPID);
-            p.creepDies("", this.pid);
+            if (this.parentPID !== 0) {
+                let p = <OvermindProcess>getProcessById(this.parentPID);
+                p.creepDies("", this.pid);
+            }
             return this.stop(0);
         } else {
             this.runCreep(creep);
