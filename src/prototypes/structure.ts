@@ -1,6 +1,7 @@
 let loadStructurePrototype = function () {
     Structure.prototype.needEnergy = function () {
-        if (this.structureType !== STRUCTURE_EXTENSION && this.structureType !== STRUCTURE_TOWER) {
+        if (this.structureType !== STRUCTURE_EXTENSION &&
+            this.structureType !== STRUCTURE_TOWER) {
             return false;
         } else if (this.structureType === STRUCTURE_TOWER) {
             return this.energy < 100;

@@ -1,5 +1,7 @@
 import CreepProcess = require("../creep");
 import { CreepMemory } from "../memory/creep";
+import { getProcessById } from "../../kernel/kernel";
+import MiningProcess = require("../mining/mining");
 interface MinerWithLinkCreepMemory extends CreepMemory {
     miningSpot: any[];
     sourceId: string;
@@ -24,6 +26,22 @@ class MinerWithLinkCreep extends CreepProcess {
         }
 
         return 0;
+    }
+    
+    public run(): number {
+        let creep = Game.creeps[this.memory.creepName];
+
+        if (!creep) {
+            console.log("A creep has disappeared:" + this.memory.creepName);
+            if (this.parentPID !== 0) {
+                let p = <MiningProcess> getProcessById(this.parentPID);
+                p.minerDies(this.pid);
+            }
+            return this.stop(0);
+        } else {
+            this.runCreep(creep);
+            return 0;
+        }
     }
 
     public setUp(creepName: string, sourceId: string, miningSpot: any) {

@@ -25,18 +25,20 @@ let getFreePid = function () {
 };
 
 export let garbageCollection = function () {
-    Memory.processMemory = _.pick(Memory.processMemory, (_: any, k: string) => (processTable[k]));
+    Memory.processMemory = _.pick(Memory.processMemory,
+        (_: any, k: string) => (processTable[k]));
 }
-export let addProcess = function <T extends Process>(p: T, priority = ProcessPriority.LowPriority) {
-    let pid = getFreePid();
-    p.pid = pid;
-    p.priority = priority;
-    processTable[p.pid] = p;
-    Memory.processMemory[pid] = {};
-    p.setMemory(getProcessMemory(pid));
-    p.status = ProcessStatus.ALIVE;
-    return p;
-};
+export let addProcess =
+    function <T extends Process>(p: T, priority = ProcessPriority.LowPriority) {
+        let pid = getFreePid();
+        p.pid = pid;
+        p.priority = priority;
+        processTable[p.pid] = p;
+        Memory.processMemory[pid] = {};
+        p.setMemory(getProcessMemory(pid));
+        p.status = ProcessStatus.ALIVE;
+        return p;
+    };
 
 export let killProcess = function (pid: number) {
     if (pid === 0) {
@@ -70,9 +72,11 @@ export let getProcessById = function (pid: number): Process {
 };
 
 export let storeProcessTable = function () {
-    let aliveProcess = _.filter(_.values(processTable), (p: Process) => p.status !== ProcessStatus.DEAD);
+    let aliveProcess = _.filter(_.values(processTable),
+        (p: Process) => p.status !== ProcessStatus.DEAD);
 
-    Memory.processTable = _.map(aliveProcess, (p: Process) => [p.pid, p.parentPID, p.classPath, p.priority]);
+    Memory.processTable = _.map(aliveProcess,
+        (p: Process) => [p.pid, p.parentPID, p.classPath, p.priority]);
 };
 
 export let getProcessMemory = function (pid: number) {
@@ -86,6 +90,10 @@ let runOneQueue = function (queue: Process[]) {
         let process = queue.pop();
         while (process) {
             try {
+		let parent = getProcessById(process.parentPID);
+		if (!parent) {
+		    killProcess(process.pid);
+		}
                 if ((process.status === ProcessStatus.SLEEP) &&
                     ((process.sleepInfo!.start + process.sleepInfo!.duration) > Game.time) &&
                     (process.sleepInfo!.duration !== -1)) {

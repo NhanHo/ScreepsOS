@@ -9,7 +9,10 @@ abstract class Process {
     public priority: ProcessPriority;
     public memory: any;
 
-    constructor(public pid: number, public parentPID: number, priority = ProcessPriority.LowPriority) {
+    constructor(public pid: number,
+		public parentPID: number,
+		priority = ProcessPriority.LowPriority) {
+
         this.status = ProcessStatus.ALIVE;
         this.priority = priority;
     };
@@ -20,11 +23,6 @@ abstract class Process {
     };
 
     public stop(signal: number) {
-        /*        if (this.parentPID) {
-                  let process = getProcessById(this.parentPID);
-                  //if (process)
-                  //process.signalParent(this.pid);
-                  }*/
         killProcess(this.pid);
         return signal;
     }

@@ -3,7 +3,6 @@
 	"tslint:recommended"
     ],
     "rules": {
-	"max-line-length": 80,
 	"forin": false,
 	"interface-name": [false],
 	"no-console": [false],
@@ -21,6 +20,7 @@
 	    false,
 	    "check-typecast"
 	],
-	"object-literal-sort-keys": false
+	"object-literal-sort-keys": false,
+	"max-line-length": [true, 100]
     }
 }

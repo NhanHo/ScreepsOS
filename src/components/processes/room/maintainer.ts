@@ -1,6 +1,7 @@
 import OvermindProcess = require("../overmind");
 import { OvermindMemory } from "../memory/overmind";
 import MaintainerCreep = require("./maintainer-creep");
+import * as Kernel from "../../kernel/kernel";
 interface MaintainerMemory extends OvermindMemory {
     roomName: string;
     childPidList: number[];
@@ -33,6 +34,10 @@ export = class MaintainerProcess extends OvermindProcess {
     }
 
     public run(): number {
+	let parent = Kernel.getProcessById(this.parentPID);
+	if (!parent || (parent.constructor.name !== "ColonyProcess")) {
+	    return this.stop(0);
+	}
         this.memory.childPidList = this.memory.childPidList || [];
         if (this.memory.childPidList.length < 2) {
             const room = Game.rooms[this.memory.spawningRoomName];
