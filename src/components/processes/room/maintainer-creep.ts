@@ -20,10 +20,17 @@ export = class MaintainerCreep extends CreepProcess {
                 this.memory.targetId = obj.id;
         }
         if (obj) {
-            if (creep.carry.energy === 0)
+            if (creep.carry.energy === 0) {
                 this.memory.current = GET_ENERGY;
-            if (creep.carry.energy === creep.carryCapacity)
-                this.memory.current = WORKING;
+	    }
+            if (creep.carry.energy === creep.carryCapacity && this.memory.current !== WORKING) {
+		this.memory.current = WORKING;
+		obj=this.acquireNewTarget();
+		if (obj)
+		    this.memory.targetId = obj.id;
+		else
+		    return 0;
+	    }
 
             if (this.memory.current === GET_ENERGY) {
                 this.getEnergy(creep);
@@ -55,11 +62,12 @@ export = class MaintainerCreep extends CreepProcess {
             return construction;
         }
 
-        const structures = <Structure[]>room.find(FIND_CONSTRUCTION_SITES, { filter: (s: Structure) => ((s.structureType === STRUCTURE_RAMPART) || (s.structureType === STRUCTURE_WALL)) });
-        const sorted = _.sortBy(structures, s => s.hits);
-        const s = sorted.pop();
+        const structures = <Structure[]>room.find(FIND_STRUCTURES, { filter: (s: Structure) => ((s.structureType === STRUCTURE_RAMPART) || (s.structureType === STRUCTURE_WALL)) });
+        const sorted = _.chain(structures).sortBy(s => s.hits).reverse();
+        const s = sorted.value().pop();
         if (s)
             return s;
+
         return null;
     }
 

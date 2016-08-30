@@ -30,9 +30,9 @@ class StarterProcess extends Process {
         let room = Game.rooms[roomName];
         let energyCapacity = room.energyCapacityAvailable;
         let multiplier = Math.floor(energyCapacity / 250);
-        if (creepList.length < 12) {
+        if (creepList.length < 6) {
             if (creepList.length === 0) {
-                multiplier = Math.floor(energyCapacity / 250);
+                multiplier = Math.floor(room.energyAvailable / 250);
             }
             let result = this.spawnCreep({ WORK: 1 * multiplier, MOVE: 2 * multiplier, CARRY: 1 * multiplier });
 
@@ -62,7 +62,7 @@ class StarterProcess extends Process {
             return <string[]>_.chain(bodyMap).map(replicatePart).flatten().value();
         };
 
-        return Game.spawns["Spawn2"].createCreep(makeBody(bodyParts), undefined);
+        return Game.spawns["Spawn1"].createCreep(makeBody(bodyParts), undefined);
     }
 }
 

@@ -1,6 +1,6 @@
 import Process = require("../process");
 import { getSpawnProcess } from "../../kernel/kernel-utils";
-import { addProcess, getProcessById } from "../../kernel/kernel";
+import { sleepProcess, addProcess, getProcessById } from "../../kernel/kernel";
 class UpgraderProcess extends Process {
     public static start(roomName: string, parentPID: number) {
         let p = new UpgraderProcess(0, parentPID);
@@ -15,6 +15,11 @@ class UpgraderProcess extends Process {
         if (!colonyProcess)
             return this.stop(0);
 
+	const room = Game.rooms[this.memory.roomName];
+	if (room.storage.store.energy < 40000) {
+	    sleepProcess(this, 1500);
+	    return 0;
+	}
         let memory = this.memory;
         let upgraderName = memory.name;
         if (upgraderName && Game.creeps[upgraderName]) {

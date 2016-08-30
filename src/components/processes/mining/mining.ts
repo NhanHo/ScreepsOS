@@ -2,7 +2,7 @@ import Process = require("../process");
 import MinerCreep = require("./miner-creep");
 import MinerWithLinkCreep = require("./miner-with-link-creep");
 import CourierCreep = require("./courier");
-import { addProcess, getProcessById, sleepProcess } from "../../kernel/kernel";
+import { addProcess, getProcessById } from "../../kernel/kernel";
 import { getSpawnProcess } from "../../kernel/kernel-utils";
 import { OvermindMemory } from "../memory/overmind";
 interface MiningMemory extends OvermindMemory {
@@ -137,11 +137,17 @@ class MiningProcess extends Process {
             if (_.isString(result)) {
                 memory.flagName = result;
             } else {
-                return 0;
+		if (result !== ERR_NAME_EXISTS) {
+		    console.log ("Some how we can't create flag:" + source.id);
+		    return 0;
+		} else
+		    memory.flagName = source.id;
             }
         }
-        if (!memory.miningSpot)
+        if (!memory.miningSpot) {
             memory.miningSpot = this.getMiningSpot();
+
+	}
         const [x, y, roomName] = this.memory.miningSpot;
         const miningPos = new RoomPosition(x, y, roomName);
         let storage = Game.rooms[this.memory.spawningRoomName].storage;
@@ -156,7 +162,7 @@ class MiningProcess extends Process {
             this.spawnCreep("courier", { MOVE: 10, CARRY: 10 });
         }
 
-        this.invaderCheck();
+        //this.invaderCheck();
         return 0;
     }
 
@@ -180,24 +186,10 @@ class MiningProcess extends Process {
             let path = pathResult.path;
             let pos = path[path.length - 1];
             this.memory.miningSpot = [pos.x, pos.y, pos.roomName];
-        }
+        } 
         return this.memory.miningSpot;
     }
 
-    private invaderCheck() {
-        if (!this.memory.miningSpot)
-            return;
-        let room = Game.rooms[this.memory.miningSpot[2]];
-        if (!room)
-            return;
-        let invaderList = <Creep[]>room.find(FIND_HOSTILE_CREEPS,
-            { filter: c => c.owner.username === "Invader" });
-        let invader = invaderList.pop();
-        if (invader) {
-            if (!room.controller.my)
-                sleepProcess(this, 1500);
-        }
-    }
 }
 
 export = MiningProcess;

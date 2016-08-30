@@ -38,9 +38,25 @@ export = class MaintainerProcess extends OvermindProcess {
 	if (!parent || (parent.constructor.name !== "ColonyProcess")) {
 	    return this.stop(0);
 	}
-        this.memory.childPidList = this.memory.childPidList || [];
+        const room = Game.rooms[this.memory.spawningRoomName];
+	if (room.storage.store.energy < 40000) {
+	    Kernel.sleepProcess(this, 1500);
+	    return 0;
+	}
+
+	const wallAndRamparts = room.find(FIND_STRUCTURES,
+					  {filter: (s: Structure)=>s.structureType === STRUCTURE_WALL ||
+					   s.structureType === STRUCTURE_RAMPART});
+
+	const hpList = _.map(wallAndRamparts, (s: Structure)=>s.hits);
+	console.log (_.min(hpList));
+	if (_.min(hpList) > 1000000) {
+	    Kernel.sleepProcess(this, 1000);
+	    return 0;
+	}
+	this.memory.childPidList = this.memory.childPidList || [];
+	
         if (this.memory.childPidList.length < 2) {
-            const room = Game.rooms[this.memory.spawningRoomName];
             const energyCapacity = room.energyCapacityAvailable - 500 - 250;
             const multiplier = Math.floor(energyCapacity / (50 + 50));
             this.spawnCreep("maintainer", { MOVE: multiplier + 5, CARRY: multiplier, WORK: 5 });

@@ -1,4 +1,4 @@
-import RemoteMiningStarter = require("../processes/mining/remote-mining-starter");
+/*import RemoteMiningStarter = require("../processes/mining/remote-mining-starter");
 import { addProcess, storeProcessTable } from "../kernel/kernel";
 export = function (argv: any) {
     let spawningRoomName = argv[0];
@@ -10,3 +10,4 @@ export = function (argv: any) {
     storeProcessTable();
 
 }
+*/
