@@ -1,9 +1,13 @@
 import { processTable } from "../kernel/kernel";
+//import Process = require("../processes/process");
 export = function () {
     for (let pid in processTable) {
-        let process = processTable[pid];
+        let process: any = processTable[pid];
         if (process.parentPID === 0) {
-            console.log(process.pid + ": " + process.constructor.name);
+            if (process.psInfo)
+                console.log(process.pid + ": " + process.psInfo());
+            else
+                console.log(process.pid + ": " + process.constructor.name);
         }
     }
 }

@@ -23,6 +23,10 @@ class ColonyProcess extends Process {
         return this.memory.roomName;
     }
 
+    public psInfo() {
+        return ("ColonyProcess " + this.getRoomName());
+    }
+
     public run(): number {
         let memory = this.memory;
         let room = Game.rooms[memory.roomName];

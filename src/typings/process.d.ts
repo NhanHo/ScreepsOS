@@ -7,8 +7,8 @@ export interface Process {
     classPath: string;
     priority: ProcessPriority;
     sleepInfo?: ProcessSleep;
-
+    memory: any;
     setMemory(memory: any): void;
     run(): number;
-
+    stop(signal: number): number;
 }
