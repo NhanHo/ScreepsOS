@@ -76,7 +76,7 @@ export let storeProcessTable = function () {
         (p: Process) => p.status !== ProcessStatus.DEAD);
 
     Memory.processTable = _.map(aliveProcess,
-        (p: Process) => [p.pid, p.parentPID, p.classPath, p.priority]);
+        (p: Process) => [p.pid, p.parentPID, p.classPath, p.priority, p.sleepInfo]);
 };
 
 export let getProcessMemory = function (pid: number) {
@@ -90,10 +90,10 @@ let runOneQueue = function (queue: Process[]) {
         let process = queue.pop();
         while (process) {
             try {
-		let parent = getProcessById(process.parentPID);
-		if (!parent) {
-		    killProcess(process.pid);
-		}
+                let parent = getProcessById(process.parentPID);
+                if (!parent) {
+                    killProcess(process.pid);
+                }
                 if ((process.status === ProcessStatus.SLEEP) &&
                     ((process.sleepInfo!.start + process.sleepInfo!.duration) > Game.time) &&
                     (process.sleepInfo!.duration !== -1)) {
@@ -125,17 +125,18 @@ export let loadProcessTable = function () {
     Memory.processTable = Memory.processTable || [];
     let storedTable = Memory.processTable;
     for (let item of storedTable) {
-        let [pid, parentPID, classPath, ...remaining] = item;
+        let [pid, parentPID, classPath, priority, ...remaining] = item;
         try {
             let processClass = require(classPath);
             let memory = getProcessMemory(pid);
-            let priority = ProcessPriority.Ticly;
-            if (remaining.length)
-                priority = remaining[0];
-            let p = new processClass(pid, parentPID, priority);
+            let p = new processClass(pid, parentPID, priority) as Process;
             p.setMemory(memory);
             processTable[p.pid] = p;
-
+            if (remaining.length === 0) {
+                p.sleepInfo = { start: Game.time, duration: 0 };
+            } else {
+                p.sleepInfo = remaining[0];
+            }
             if (priority === ProcessPriority.Ticly) {
                 ticlyQueue.push(p);
             }
