@@ -137,17 +137,17 @@ class MiningProcess extends Process {
             if (_.isString(result)) {
                 memory.flagName = result;
             } else {
-		if (result !== ERR_NAME_EXISTS) {
-		    console.log ("Some how we can't create flag:" + source.id);
-		    return 0;
-		} else
-		    memory.flagName = source.id;
+                if (result !== ERR_NAME_EXISTS) {
+                    console.log("Some how we can't create flag:" + source.id);
+                    return 0;
+                } else
+                    memory.flagName = source.id;
             }
         }
         if (!memory.miningSpot) {
             memory.miningSpot = this.getMiningSpot();
 
-	}
+        }
         const [x, y, roomName] = this.memory.miningSpot;
         const miningPos = new RoomPosition(x, y, roomName);
         let storage = Game.rooms[this.memory.spawningRoomName].storage;
@@ -164,6 +164,10 @@ class MiningProcess extends Process {
 
         //this.invaderCheck();
         return 0;
+    }
+
+    public psInfo() {
+        return ("Mining Process " + this.memory.spawningRoomName + " " + this.memory.flagName);
     }
 
     protected spawnCreep(creepID: string, bodyParts: bodyMap, priority?: number) {
@@ -186,7 +190,7 @@ class MiningProcess extends Process {
             let path = pathResult.path;
             let pos = path[path.length - 1];
             this.memory.miningSpot = [pos.x, pos.y, pos.roomName];
-        } 
+        }
         return this.memory.miningSpot;
     }
 

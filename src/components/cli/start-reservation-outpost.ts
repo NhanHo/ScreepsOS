@@ -22,6 +22,7 @@ export = function (argv: any[]) {
         let p = new ReservationOutpostProcess(0, colonyProcess.pid);
         addProcess(p);
         p.memory.roomName = outpostRoomName;
+        p.memory.spawningRoomName = colonyRoomName;
         storeProcessTable();
     } else {
         console.log("Failed to start reservation process: Can't find the colony process " +
