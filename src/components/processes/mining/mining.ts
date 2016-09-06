@@ -89,8 +89,9 @@ class MiningProcess extends Process {
         if (lastCourierIncrease > (Game.time - 1501))
             return -1;
         if (this.memory.courierCount === 3) {
+            let source = <Source>Game.getObjectById(this.memory.sourceId);
             console.log("Mining at source " + this.memory.sourceId +
-                " is requiring too many couriers");
+                " is requiring too many couriers. Room:" + source.pos.roomName);
             return -1;
         }
         this.memory.courierCount += 1;

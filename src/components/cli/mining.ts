@@ -1,6 +1,7 @@
 import MiningProcess = require("../processes/mining/mining");
 import { addProcess, storeProcessTable } from "../kernel/kernel";
 import Process = require("../processes/process");
+import { getColonyProcess } from "../kernel/colony-utils";
 let addProcessAndSave = function (p: Process) {
     addProcess(p);
     storeProcessTable();
@@ -31,8 +32,15 @@ export = function (argv: string[]) {
         source.pos.createFlag(sourceId, COLOR_YELLOW);
     }
 
-    let p = new MiningProcess(0, 0);
+    let colony = getColonyProcess(roomName);
+    if (!colony) {
+        console.log("There is no colony process for room:" + roomName);
+        return;
+    }
+
+    let p = new MiningProcess(0, colony.pid);
     addProcessAndSave(p);
+
     p.memory.sourceId = sourceId;
     p.memory.spawningRoomName = roomName;
     p.memory.flagName = sourceId;
