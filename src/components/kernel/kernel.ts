@@ -1,7 +1,7 @@
 import { ProcessStatus } from "../processes/process-status";
 
 import { ProcessPriority } from "../processes/constants";
-import { Process } from "../../typings/process.d.ts";
+import { Process } from "../../typings/process";
 let ticlyQueue: Process[] = [];
 let ticlyLastQueue: Process[] = [];
 let lowPriorityQueue: Process[] = [];

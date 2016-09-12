@@ -12,8 +12,9 @@
   },
   "compileOnSave": false,
   "include": [
-    "typings/**/*.d.ts",
-    "src/**/*.ts"
+      "typings/**/*.d.ts",
+      "src/**/*.ts",
+      "src/**/*.d.ts"
   ],
   "exclude": [
     "dist",

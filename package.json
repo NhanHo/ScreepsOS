@@ -5,33 +5,37 @@
   "main": "./dist/main.js",
   "repository": "resir014/screeps-typescript-starter",
   "scripts": {
-    "gulp": "gulp",
-    "postinstall": "typings install",
-    "deploy": "gulp build",
-    "start": "gulp watch",
-    "test": "gulp lint",
-    "typings": "typings"
+    "test": "node_modules/.bin/jest"
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "babel-jest": "*",
+    "babel-preset-es2015": "^6.14.0",
     "deep-equal": "^1.0.1",
     "gulp": "~3.9.0",
+    "gulp-babel": "^6.1.2",
     "gulp-clean": "^0.3.2",
     "gulp-collect": "^0.1.0",
+    "gulp-jest": "^0.5.2",
     "gulp-rename": "^1.2.2",
     "gulp-tslint": "^6.0.1",
     "gulp-typescript": "^2.13.6",
     "gulp-util": "^3.0.7",
-    "lodash": "^4.13.1",
+    "jest-cli": "^15.1.1",
+    "lodash": "^3.10.0",
     "q": "^1.4.1",
     "recast": "^0.11.10",
     "through2": "^2.0.1",
     "tslint": "^3.13.0",
     "typescript": "^2.0.0",
-    "typings": "^1.3.0"
+    "typings": "^1.3.0",
+    "vm": "^0.1.0"
   },
   "dependencies": {
     "minimist": "^1.2.0"
+  },
+  "jest": {
+    "rootDir": "__tests__"
   }
 }

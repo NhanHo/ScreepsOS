@@ -66,6 +66,9 @@ class LibrarianProcess extends Process {
         let room = Game.rooms[this.memory.roomName];
         let availableEnergy = room.energyAvailable;
         let modifier = Math.floor(availableEnergy / 100);
+        if (modifier > 25)
+            modifier = 25;
+
         this.spawnCreep("small", { CARRY: modifier, MOVE: modifier }, 100);
         return 0;
     }
@@ -74,6 +77,8 @@ class LibrarianProcess extends Process {
         let room = Game.rooms[this.memory.roomName];
         let availableEnergy = room.energyCapacityAvailable;
         let modifier = Math.floor(availableEnergy / 100);
+        if (modifier > 25)
+            modifier = 25;
         this.spawnCreep("big", { CARRY: modifier, MOVE: modifier }, 100);
         return 0;
 

@@ -60,12 +60,17 @@ class SpawnProcess extends Process {
         memory.requestList = _.sortBy(<CreepRequest[]>memory.requestList, i => i.priority);
         let request: CreepRequest = memory.requestList.pop();
         let spawn = this.findFreeSpawn(this.memory.roomName);
-
         if (request) {
-            if (spawn && spawn.canCreateCreep(makeBody(request.bodyParts)) === OK) {
-                let process: any = getProcessById(request.pid);
-                let creepName = spawn.createCreep(makeBody(request.bodyParts));
-                process.receiveCreep(request.creepID, Game.creeps[creepName]);
+            if (spawn) {
+                const body = makeBody(request.bodyParts);
+                const canSpawn = spawn.canCreateCreep(body);
+                console.log(canSpawn);
+                console.log(JSON.stringify(request));
+                if (canSpawn === OK) {
+                    let process: any = getProcessById(request.pid);
+                    let creepName = spawn.createCreep(body);
+                    process.receiveCreep(request.creepID, Game.creeps[creepName]);
+                }
             }
         }
         return 0;
