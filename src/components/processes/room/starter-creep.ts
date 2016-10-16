@@ -31,12 +31,12 @@ class StarterCreepProcess extends Process {
         const memory = this.memory;
         const room = creep.room;
         const index = memory.index;
-        const controller: Controller = room.controller;
+        const controller = room.controller!;
 
         const targets: ConstructionSite[] = <ConstructionSite[]>room.find(FIND_CONSTRUCTION_SITES);
         if (controller.level === 0) {
-            creep.moveTo(creep.room.controller);
-            creep.claimController(creep.room.controller);
+            creep.moveTo(controller);
+            creep.claimController(controller);
             return;
         }
         if (memory.currentAction === undefined) memory.currentAction = "Mine";
@@ -58,9 +58,9 @@ class StarterCreepProcess extends Process {
                 return;
 
             }
-            if (creep.room.controller.ticksToDowngrade < 1000) {
-                creep.moveTo(creep.room.controller);
-                creep.upgradeController(creep.room.controller);
+            if (controller.ticksToDowngrade < 1000) {
+                creep.moveTo(controller);
+                creep.upgradeController(controller);
                 return;
             }
 
@@ -80,12 +80,12 @@ class StarterCreepProcess extends Process {
                     creep.build(targets[0]);
 
                 } else {
-                    if (room.controller.level > 3 && room.storage) {
+                    if (controller.level > 3 && room.storage) {
                         creep.moveTo(room.storage);
                         creep.transfer(room.storage, RESOURCE_ENERGY);
                     } else {
-                        creep.moveTo(creep.room.controller);
-                        creep.upgradeController(creep.room.controller);
+                        creep.moveTo(controller);
+                        creep.upgradeController(controller);
                     }
                 }
             } else {

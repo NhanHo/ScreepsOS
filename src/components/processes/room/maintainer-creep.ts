@@ -22,15 +22,15 @@ export = class MaintainerCreep extends CreepProcess {
         if (obj) {
             if (creep.carry.energy === 0) {
                 this.memory.current = GET_ENERGY;
-	    }
+            }
             if (creep.carry.energy === creep.carryCapacity && this.memory.current !== WORKING) {
-		this.memory.current = WORKING;
-		obj=this.acquireNewTarget();
-		if (obj)
-		    this.memory.targetId = obj.id;
-		else
-		    return 0;
-	    }
+                this.memory.current = WORKING;
+                obj = this.acquireNewTarget();
+                if (obj)
+                    this.memory.targetId = obj.id;
+                else
+                    return 0;
+            }
 
             if (this.memory.current === GET_ENERGY) {
                 this.getEnergy(creep);
@@ -74,7 +74,7 @@ export = class MaintainerCreep extends CreepProcess {
     private getEnergy(creep: Creep) {
         let room = Game.rooms[this.memory.roomName];
         let storage = room.storage;
-        if (room.storage) {
+        if (storage) {
             creep.moveTo(storage);
             creep.withdraw(storage, RESOURCE_ENERGY);
         }

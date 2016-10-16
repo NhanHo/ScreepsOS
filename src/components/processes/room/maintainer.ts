@@ -39,7 +39,7 @@ export = class MaintainerProcess extends OvermindProcess {
             return this.stop(0);
         }
         const room = Game.rooms[this.memory.spawningRoomName];
-        if (room.storage.store.energy < 40000) {
+        if (room.storage!.store.energy < 40000) {
             Kernel.sleepProcess(this, 1500);
             return 0;
         }

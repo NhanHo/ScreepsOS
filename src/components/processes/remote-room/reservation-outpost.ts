@@ -24,6 +24,10 @@ class ReservationOutpostProcess extends OvermindProcess {
                 creep.moveTo(new RoomPosition(25, 25, this.memory.roomName));
                 return 0;
             }
+            if (!room.controller) {
+                console.log(`Pid ${this.pid} is trying to reserve a room without controller`);
+                return 0;
+            }
             if (creep.pos.isNearTo(room.controller))
                 creep.reserveController(room.controller);
             else

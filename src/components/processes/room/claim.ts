@@ -44,7 +44,7 @@ class ClaimProcess extends Process {
 
     public run(): number {
         let targetRoom = Game.rooms[this.memory.targetRoomName];
-        if (!targetRoom || !targetRoom.controller.my) {
+        if (!targetRoom || !targetRoom.controller!.my) {
             this.runClaimer();
         } else {
             this.memory.starterCreepPid = this.memory.starterCreepPid || [];
@@ -76,9 +76,9 @@ class ClaimProcess extends Process {
         } else {
             let targetRoom = Game.rooms[this.memory.targetRoomName];
             if (targetRoom) {
-                claimer.moveTo(targetRoom.controller);
-                claimer.claimController(targetRoom.controller);
-                if (targetRoom.controller.my)
+                claimer.moveTo(targetRoom.controller!);
+                claimer.claimController(targetRoom.controller!);
+                if (targetRoom.controller!.my)
                     claimer.suicide();
             } else {
                 claimer.moveTo(new RoomPosition(25, 25, this.memory.targetRoomName));

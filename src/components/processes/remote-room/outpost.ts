@@ -65,6 +65,10 @@ class OutpostProcess extends OvermindProcess {
             const room = Game.rooms[this.memory.roomName];
             if (!room)
                 return 0;
+            if (!room.controller) {
+                console.log(`Pid ${this.pid} Trying to reserve a room without controller?!`);
+                return 0;
+            }
             if (!room.controller.reservation || (room.controller.reservation.ticksToEnd < 4000))
                 this.spawnCreep("reserve", { CLAIM: 2, MOVE: 2 });
             else

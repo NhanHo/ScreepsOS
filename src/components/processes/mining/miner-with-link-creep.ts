@@ -20,21 +20,25 @@ class MinerWithLinkCreep extends CreepProcess {
 
             if (_.sum(creep.carry) >= (creep.carryCapacity - 15)) {
                 let storage = creep.room.storage;
-                creep.transfer(storage, RESOURCE_ENERGY);
+                if (storage) {
+                    creep.transfer(storage, RESOURCE_ENERGY);
+                } else {
+                    console.log("Missing a storage in room:" + creep.room.name);
+                }
             }
 
         }
 
         return 0;
     }
-    
+
     public run(): number {
         let creep = Game.creeps[this.memory.creepName];
 
         if (!creep) {
             console.log("A creep has disappeared:" + this.memory.creepName);
             if (this.parentPID !== 0) {
-                let p = <MiningProcess> getProcessById(this.parentPID);
+                let p = <MiningProcess>getProcessById(this.parentPID);
                 p.minerDies(this.pid);
             }
             return this.stop(0);

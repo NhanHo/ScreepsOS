@@ -49,7 +49,7 @@ class MiningProcess extends Process {
             const [x, y, roomName] = this.memory.miningSpot;
             const pos = new RoomPosition(x, y, roomName);
             const storage = Game.rooms[this.memory.spawningRoomName].storage;
-            if (pos.isNearTo(storage)) {
+            if (storage && pos.isNearTo(storage)) {
                 let p = new MinerWithLinkCreep(0, this.pid);
                 p = addProcess(p);
                 p.setUp(creepName, this.memory.sourceId, this.memory.miningSpot);
@@ -67,7 +67,11 @@ class MiningProcess extends Process {
             let p = new CourierCreep(0, this.pid);
             p = addProcess(p);
             // TODO: allows different receiver object here
-            p.setUp(creepName, Game.rooms[this.memory.spawningRoomName].storage.id);
+            const storage = Game.rooms[this.memory.spawningRoomName].storage
+            if (storage)
+                p.setUp(creepName, storage.id);
+            else
+                console.log(`Creep ${creepName} does not have a target for deposit`);
             p.parentPID = this.pid;
             this.memory.courierPidList.push(p.pid);
         }
@@ -153,7 +157,7 @@ class MiningProcess extends Process {
         const miningPos = new RoomPosition(x, y, roomName);
         let storage = Game.rooms[this.memory.spawningRoomName].storage;
 
-        if (miningPos.isNearTo(storage.pos)) {
+        if (storage && miningPos.isNearTo(storage.pos)) {
             this.memory.courierCount = 0;
         }
 
@@ -187,6 +191,9 @@ class MiningProcess extends Process {
                 source = Game.flags[this.memory.flagName];
             }
             let storage = Game.rooms[this.memory.spawningRoomName].storage;
+            if (!storage) {
+                return;
+            }
             let pathResult = PathFinder.search(storage.pos, { pos: source.pos, range: 1 });
             let path = pathResult.path;
             let pos = path[path.length - 1];

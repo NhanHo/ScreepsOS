@@ -15,11 +15,11 @@ class UpgraderProcess extends Process {
         if (!colonyProcess)
             return this.stop(0);
 
-	const room = Game.rooms[this.memory.roomName];
-	if (room.storage.store.energy < 40000) {
-	    sleepProcess(this, 1500);
-	    return 0;
-	}
+        const room = Game.rooms[this.memory.roomName];
+        if (!room.storage || room.storage.store.energy < 40000) {
+            sleepProcess(this, 1500);
+            return 0;
+        }
         let memory = this.memory;
         let upgraderName = memory.name;
         if (upgraderName && Game.creeps[upgraderName]) {
@@ -32,10 +32,10 @@ class UpgraderProcess extends Process {
 
     public runCreep(creepName: string): number {
         let creep = Game.creeps[creepName];
-        let storage = creep.room.storage;
-        let controller = creep.room.controller;
-        if (creep.pos.inRangeTo(creep.room.controller.pos, 3) &&
-            creep.pos.isNearTo(creep.room.storage.pos)) {
+        let storage = creep.room.storage!;
+        let controller = creep.room.controller!;
+        if (creep.pos.inRangeTo(controller.pos, 3) &&
+            creep.pos.isNearTo(storage.pos)) {
             storage.transfer(creep, RESOURCE_ENERGY);
             creep.upgradeController(controller);
         } else {

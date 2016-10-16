@@ -36,7 +36,7 @@ class ColonyProcess extends Process {
             memory.spawnPID = this.launchSpawnProcess(room.name);
         }
 
-        if (room.controller.level >= 4 && room.storage && room.storage.store.energy > 10000) {
+        if (room.controller!.level >= 4 && room.storage && room.storage.store.energy > 10000) {
 
             let upgraderPID = memory.upgraderPID;
 

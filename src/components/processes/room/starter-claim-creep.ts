@@ -30,7 +30,7 @@ class StarterClaimCreepProcess extends Process {
     private moveToAnotherRoom(creep: Creep): number {
         let room = Game.rooms[this.memory.targetRoomName];
         if (creep.room.name !== room.name) {
-            creep.moveTo(room.controller);
+            creep.moveTo(room.controller!);
             return 0;
         }
         return -1;
@@ -65,8 +65,8 @@ class StarterClaimCreepProcess extends Process {
             const source: Source = <Source>creep.room.find(FIND_SOURCES)[index];
             creep.moveTo(source);
             creep.harvest(source);
-            if (creep.pos.inRangeTo(creep.room.controller.pos, 3))
-                creep.upgradeController(creep.room.controller);
+            if (creep.pos.inRangeTo(creep.room.controller!.pos, 3))
+                creep.upgradeController(creep.room.controller!);
 
         } else {
             if (creep.carry.energy === 0) {
@@ -74,9 +74,9 @@ class StarterClaimCreepProcess extends Process {
                 return;
 
             }
-            if (creep.room.controller.ticksToDowngrade < 1000) {
-                creep.moveTo(creep.room.controller);
-                creep.upgradeController(creep.room.controller);
+            if (creep.room.controller!.ticksToDowngrade < 1000) {
+                creep.moveTo(creep.room.controller!);
+                creep.upgradeController(creep.room.controller!);
                 return;
             }
 
@@ -96,12 +96,12 @@ class StarterClaimCreepProcess extends Process {
                     creep.build(targets[0]);
 
                 } else {
-                    if (room.controller.level > 3 && room.storage) {
+                    if (room.controller!.level > 3 && room.storage) {
                         creep.moveTo(room.storage);
                         creep.transfer(room.storage, RESOURCE_ENERGY);
                     } else {
-                        creep.moveTo(creep.room.controller);
-                        creep.upgradeController(creep.room.controller);
+                        creep.moveTo(creep.room.controller!);
+                        creep.upgradeController(creep.room.controller!);
                     }
                 }
             } else {
