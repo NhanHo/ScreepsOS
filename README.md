@@ -1,8 +1,9 @@
+This is actively under development. Looking for contributors! 
+
 I can be found in game or on Slack with username "NhanHo".
 
-Note that is this NOT the current code running on my main account in Screeps. Although I do plan to switch over when it reaches feature parity with my old code.
-
 # How to try this out 
+
 For your own safety, it's better to only try this in a completely new colony (ie. you just respawn) for now.
 
 First, edit `config.example.json` and put in the appropriate infomation, then copy it to `config.json`
@@ -42,6 +43,7 @@ It is recommended to use this process until RCL 4 before switching to the set of
 - Invader shooting process: get all towers and shoot at
 - Remote mining
 - Command line interface to manage your empire.
+
 # TODO: All of the features below is planned to be implemented soon™
 
 - A list of all available command lines (For the moment, check out `src/components/cli` directory. Every files is a command line that can be used in screeps's console)
