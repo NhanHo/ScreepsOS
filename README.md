@@ -2,6 +2,10 @@ This is actively under development. Looking for contributors!
 
 I can be found in game or on Slack with username "NhanHo".
 
+# TLDR : 
+This can be used on a completely new account. Right now the features go up to "all the code needed for a RCL 4 room", proper mining and remote mining.
+
+
 # How to try this out 
 
 For your own safety, it's better to only try this in a completely new colony (ie. you just respawn) for now.
