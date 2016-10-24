@@ -73,7 +73,7 @@ class ClaimProcess extends Process {
     private runClaimer() {
         let claimer = Game.creeps[this.memory.claimerCreep];
         if (!claimer) {
-            this.spawnCreep("claimer", { MOVE: 1, CLAIM: 1 });
+            this.spawnCreep("claimer", { MOVE: 1, CLAIM: 1 }, 5);
         } else {
             let targetRoom = Game.rooms[this.memory.targetRoomName];
             if (targetRoom) {
