@@ -55,7 +55,7 @@ class ClaimProcess extends Process {
                 let energyCapacity = spawningRoom.energyCapacityAvailable;
                 let multiplier = Math.floor(energyCapacity / 250);
                 this.spawnCreep("starter",
-                    { WORK: 1 * multiplier, MOVE: 2 * multiplier, CARRY: 1 * multiplier });
+                    { WORK: 1 * multiplier, MOVE: 2 * multiplier, CARRY: 1 * multiplier }, 5);
             }
         }
         return 0;
