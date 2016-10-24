@@ -17,8 +17,11 @@ export = function (___: any) {
                 process.parentPID = newPid;
             }
         }
+        pidZero.parentPID = 0;
+        Memory.processMemory[newPid] = _.cloneDeep(Memory.processMemory[0]);
         delete (processTable[0]);
         addProcess(p);
+        p.pid = 0;
         storeProcessTable();
     }
 };
