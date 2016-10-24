@@ -18,7 +18,8 @@ class ClaimProcess extends Process {
 
     public getNeededIndex(): number {
         let creepPIDList = this.memory.starterCreepPid;
-        let process = <StarterClaimCreepProcess[]>_.map(creepPIDList, getProcessById);
+        let process = <StarterClaimCreepProcess[]>_.filter(_.map(creepPIDList, getProcessById),
+            (p: Process) => p instanceof StarterClaimCreepProcess);
         let odd = _.filter(process, (p => p.getIndex() === 1));
         let even = _.filter(process, (p => p.getIndex() === 0));
         if (odd.length < even.length)
