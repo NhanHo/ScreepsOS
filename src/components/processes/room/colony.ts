@@ -67,9 +67,9 @@ class ColonyProcess extends Process {
                 memory.librarianPID = p.pid;
             }
 
-            let inRoomMiningPid = memory.miningPIDList || [];
-            const miningProcess = _.filter(_.map(inRoomMiningPid, getProcessById));
-            if (miningProcess.length === 0) {
+            let inRoomMiningPid: number[] = memory.miningPIDList || [];
+            inRoomMiningPid = _.filter(inRoomMiningPid, pid => getProcessById(pid));
+            if (inRoomMiningPid.length === 0) {
                 const sources = room.find(FIND_SOURCES) as Source[];
                 for (let source of sources) {
                     const sourceId = source.id;
@@ -80,11 +80,13 @@ class ColonyProcess extends Process {
                     }
 
                     let p = new MiningProcess(0, this.pid);
+                    p = addProcess(p);
                     p.memory.sourceId = sourceId;
                     p.memory.spawningRoomName = roomName;
                     p.memory.flagName = sourceId;
+                    inRoomMiningPid.push(p.pid);
                 }
-
+                memory.miningPIDList = inRoomMiningPid;
                 this.killStarterProcess(room.name);
             }
             sleepProcess(this, 100);
