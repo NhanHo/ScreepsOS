@@ -61,8 +61,11 @@ class StarterProcess extends Process {
             };
             return <string[]>_.chain(bodyMap).map(replicatePart).flatten().value();
         };
-
-        return Game.spawns["Spawn1"].createCreep(makeBody(bodyParts), undefined);
+        const room = Game.rooms[this.memory.roomName];
+        const spawns = room.find(FIND_STRUCTURES, { filter: (s: Spawn) => s.structureType === STRUCTURE_SPAWN }) as Spawn[];
+        if (spawns.length) {
+            return spawns[0].createCreep(makeBody(bodyParts), undefined);
+        }
     }
 }
 
