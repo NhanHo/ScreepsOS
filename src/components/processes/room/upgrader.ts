@@ -41,7 +41,8 @@ class UpgraderProcess extends Process {
         } else {
 
             let pos = _.filter(storage.pos.adjacentPositions(), pos => pos.inRangeTo(controller.pos, 3));
-            creep.moveTo(pos[0]);
+            if (pos.length > 0)
+                creep.moveTo(pos[0]);
         }
         return 0;
     }

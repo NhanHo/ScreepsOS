@@ -1,11 +1,14 @@
 import Process = require("../process");
-import { storeProcessTable, getProcessById } from "../../kernel/kernel";
+import { processTable, storeProcessTable, getProcessById, sleepProcess, killProcess } from "../../kernel/kernel";
 import SpawnProcess = require("./spawn");
 import { addProcess } from "../../kernel/kernel";
 import LibrarianProcess = require("./librarian");
 import UpgraderProcess = require("./upgrader");
 import DefenseProcess = require("./defense");
 import MaintainerProcess = require("./maintainer");
+import MiningProcess = require("../mining/mining");
+import StarterProcess = require("./starter");
+
 // import BuilderPlannerProcess = require("./building-planner");
 class ColonyProcess extends Process {
     public static start(roomName: string) {
@@ -35,7 +38,6 @@ class ColonyProcess extends Process {
         if (!spawnPID || !getProcessById(spawnPID)) {
             memory.spawnPID = this.launchSpawnProcess(room.name);
         }
-
         if (room.controller!.level >= 4 && room.storage && room.storage.store.energy > 10000) {
 
             let upgraderPID = memory.upgraderPID;
@@ -64,8 +66,42 @@ class ColonyProcess extends Process {
                 p.memory.roomName = room.name;
                 memory.librarianPID = p.pid;
             }
+
+            let inRoomMiningPid = memory.miningPIDList || [];
+            const miningProcess = _.filter(_.map(inRoomMiningPid, getProcessById));
+            if (miningProcess.length === 0) {
+                const sources = room.find(FIND_SOURCES) as Source[];
+                for (let source of sources) {
+                    const sourceId = source.id;
+                    const roomName = room.name;
+                    let flag = Game.flags[sourceId];
+                    if (!flag) {
+                        source.pos.createFlag(sourceId, COLOR_YELLOW);
+                    }
+
+                    let p = new MiningProcess(0, this.pid);
+                    p.memory.sourceId = sourceId;
+                    p.memory.spawningRoomName = roomName;
+                    p.memory.flagName = sourceId;
+                }
+
+                this.killStarterProcess(room.name);
+            }
+            sleepProcess(this, 100);
         }
+
+
         return 0;
+    }
+
+    private killStarterProcess(roomName: string) {
+        for (const pid in processTable) {
+            const p = processTable[pid];
+            if (p instanceof StarterProcess && p.memory.roomName === roomName) {
+                killProcess(p.pid);
+                return;
+            }
+        }
     }
 
     private launchSpawnProcess(roomName: string) {
