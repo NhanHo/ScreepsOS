@@ -1,8 +1,10 @@
-import Process = require("../process");
+import Process = require("../../kernel/kernel/process");
 import MiningProcess = require("./mining");
-import { getProcessById } from "../../kernel/kernel";
+import { getProcessById } from "../../kernel/kernel/kernel";
 class CourierProcess extends Process {
-    public classPath = "components.processes.mining.courier";
+    public classPath() {
+        return "components.processes.mining.courier";
+    }
 
     public run(): number {
         let memory = this.memory;

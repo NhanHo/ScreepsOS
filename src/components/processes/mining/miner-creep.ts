@@ -1,8 +1,10 @@
-import Process = require("../process");
-import { getProcessById } from "../../kernel/kernel";
+import Process = require("../../kernel/kernel/process");
+import { getProcessById } from "../../kernel/kernel/kernel";
 import MiningProcess = require("../mining/mining");
 class MinerCreepProcess extends Process {
-    public classPath = "components.processes.mining.miner-creep";
+    public classPath() {
+        return "components.processes.mining.miner-creep";
+    }
     /* Memory has
      * sourceID
      * creep name

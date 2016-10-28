@@ -1,6 +1,6 @@
 import OvermindProcess = require("../overmind");
 import MiningProcess = require("../mining/mining");
-import { addProcess, getProcessById, sleepProcess } from "../../kernel/kernel";
+import { addProcess, getProcessById, sleepProcess } from "../../kernel/kernel/kernel";
 import { OvermindMemory } from "../memory/overmind";
 import ReserveCreep = require("./reserve-creep");
 interface OutpostMemory extends OvermindMemory {
@@ -12,7 +12,10 @@ interface OutpostMemory extends OvermindMemory {
 }
 
 class OutpostProcess extends OvermindProcess {
-    public classPath = "components.processes.remote-room.outpost";
+    public classPath() {
+        return "components.processes.remote-room.outpost";
+    }
+
     public memory: OutpostMemory;
     public creepDies(id: string, pid: number) {
         if (id === "reserve") {

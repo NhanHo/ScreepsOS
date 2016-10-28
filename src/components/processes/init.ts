@@ -1,7 +1,10 @@
-import Process = require("./process");
+import Process = require("../kernel/kernel/process");
 
 class InitProcess extends Process {
-    public classPath = "components.processes.init";
+    public classPath(): string {
+        return "components.processes.init";
+    }
+
     public run(): number {
         return 0;
     }

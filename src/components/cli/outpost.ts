@@ -1,4 +1,4 @@
-import * as Kernel from "../kernel/kernel";
+import * as Kernel from "../kernel/kernel/kernel";
 import OutpostStarter = require("../processes/remote-room/outpost-starter");
 export = function (argv: string[]) {
     const colonyRoomName = argv[0];

@@ -1,9 +1,9 @@
-import Process = require("../process");
+import Process = require("../../kernel/kernel/process");
 import MinerCreep = require("./miner-creep");
 import MinerWithLinkCreep = require("./miner-with-link-creep");
 import CourierCreep = require("./courier");
-import { addProcess, getProcessById } from "../../kernel/kernel";
-import { getSpawnProcess } from "../../kernel/kernel-utils";
+import { addProcess, getProcessById } from "../../kernel/kernel/kernel";
+import { getSpawnProcess } from "../../utils/colony";
 import { OvermindMemory } from "../memory/overmind";
 interface MiningMemory extends OvermindMemory {
     minerPid: number | null;
@@ -25,7 +25,9 @@ class MiningProcess extends Process {
      * source ID: sourceId
      */
     public memory: MiningMemory;
-    public classPath = "components.processes.mining.mining";
+    public classPath() {
+        return "components.processes.mining.mining";
+    }
 
     public minerDies(_: number) {
         this.memory.minerPid = null;

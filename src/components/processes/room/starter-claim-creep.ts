@@ -1,6 +1,6 @@
-import { getProcessById } from "../../kernel/kernel";
+import { getProcessById } from "../../kernel/kernel/kernel";
 import ClaimProcess = require("./claim");
-import Process = require("../process");
+import Process = require("../../kernel/kernel/process");
 interface StarterClaimCreepMemory {
     index: number;
     targetRoomName: string;
@@ -8,7 +8,10 @@ interface StarterClaimCreepMemory {
     creepName: string;
 }
 class StarterClaimCreepProcess extends Process {
-    public readonly classPath = "components.processes.room.starter-claim-creep";
+    public classPath() {
+        return "components.processes.room.starter-claim-creep";
+    }
+
     public memory: StarterClaimCreepMemory;
 
     public getIndex() {

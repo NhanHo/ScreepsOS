@@ -4,7 +4,9 @@ interface ReserveCreepMemory extends CreepMemory {
     roomName: string;
 }
 class ReserveCreep extends CreepProcess {
-    public classPath = "components.processes.remote-room.reserve-creep";
+    public classPath() {
+        return "components.processes.remote-room.reserve-creep";
+    }
     public memory: ReserveCreepMemory;
     public runCreep(creep: Creep): number {
         const roomName = this.memory.roomName;

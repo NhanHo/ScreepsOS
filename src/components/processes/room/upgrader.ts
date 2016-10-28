@@ -1,6 +1,6 @@
-import Process = require("../process");
-import { getSpawnProcess } from "../../kernel/kernel-utils";
-import { sleepProcess, addProcess, getProcessById } from "../../kernel/kernel";
+import Process = require("../../kernel/kernel/process");
+import { getSpawnProcess } from "../../utils/colony";
+import { sleepProcess, addProcess, getProcessById } from "../../kernel/kernel/kernel";
 class UpgraderProcess extends Process {
     public static start(roomName: string, parentPID: number) {
         let p = new UpgraderProcess(0, parentPID);
@@ -9,7 +9,9 @@ class UpgraderProcess extends Process {
         return p.pid;
     }
 
-    public classPath = "components.processes.room.upgrader";
+    public classPath() {
+        return "components.processes.room.upgrader";
+    }
     public run(): number {
         let colonyProcess = getProcessById(this.parentPID);
         if (!colonyProcess)

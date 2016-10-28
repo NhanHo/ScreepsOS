@@ -1,9 +1,11 @@
-import Process = require("../process");
-import { getProcessById } from "../../kernel/kernel";
-import { getSpawnProcess } from "../../kernel/kernel-utils";
+import Process = require("../../kernel/kernel/process");
+import { getProcessById } from "../../kernel/kernel/kernel";
+import { getSpawnProcess } from "../../utils/colony";
 class LibrarianProcess extends Process {
 
-    public classPath = "components.processes.room.librarian";
+    public classPath() {
+        return "components.processes.room.librarian";
+    }
 
     public receiveCreep(id: string, creep: Creep) {
         if (id === "small") {

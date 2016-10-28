@@ -10,7 +10,9 @@ interface MaintainerMemory extends CreepMemory {
 }
 export = class MaintainerCreep extends CreepProcess {
     public memory: MaintainerMemory;
-    public classPath = "components.processes.room.maintainer-creep";
+    public classPath() {
+        return "components.processes.room.maintainer-creep";
+    }
 
     public runCreep(creep: Creep): number {
         let obj = <Structure | ConstructionSite | null>Game.getObjectById(this.memory.targetId);

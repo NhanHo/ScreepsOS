@@ -1,5 +1,5 @@
-import { addProcess, storeProcessTable, processTable } from "../kernel/kernel";
-import Process = require("../processes/process");
+import { addProcess, storeProcessTable, processTable } from "../kernel/kernel/kernel";
+import Process = require("../kernel/kernel/process");
 import InitProcess = require("../processes/init");
 export = function (___: any) {
     let p = new InitProcess(0, 0);

@@ -1,14 +1,16 @@
 import OvermindProcess = require("../overmind");
 import { OvermindMemory } from "../memory/overmind";
 import OutpostProcess = require("./outpost");
-import {addProcess} from "../../kernel/kernel";
+import { addProcess } from "../../kernel/kernel/kernel";
 
 interface OutpostStarterMemory extends OvermindMemory {
     targetRoomName: string;
     scout: string;
 }
 class OutpostStarterProcess extends OvermindProcess {
-    public classPath = "components.processes.remote-room.outpost-starter";
+    public classPath() {
+        return "components.processes.remote-room.outpost-starter";
+    }
     public memory: OutpostStarterMemory;
 
     public run(): number {
@@ -17,13 +19,13 @@ class OutpostStarterProcess extends OvermindProcess {
         if (!room) {
             return this.scout();
         } else {
-	    const outpostProcess = new OutpostProcess(0, 0);
-	    addProcess(outpostProcess);
-	    outpostProcess.memory.roomName = memory.targetRoomName;
-	    outpostProcess.memory.spawningRoomName = memory.spawningRoomName;
+            const outpostProcess = new OutpostProcess(0, 0);
+            addProcess(outpostProcess);
+            outpostProcess.memory.roomName = memory.targetRoomName;
+            outpostProcess.memory.spawningRoomName = memory.spawningRoomName;
 
-	    outpostProcess.startMining();
-	    
+            outpostProcess.startMining();
+
             console.log("Output process started, terminate OutpostStarter process");
             return this.stop(0);
         }

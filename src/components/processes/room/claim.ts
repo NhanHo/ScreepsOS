@@ -1,6 +1,6 @@
-import Process = require("../process");
-import { getSpawnProcess } from "../../kernel/kernel-utils";
-import { addProcess, getProcessById } from "../../kernel/kernel";
+import Process = require("../../kernel/kernel/process");
+import { getSpawnProcess } from "../../utils/colony";
+import { addProcess, getProcessById } from "../../kernel/kernel/kernel";
 import StarterClaimCreepProcess = require("./starter-claim-creep");
 interface ClaimMemory {
     spawningRoomName: string;
@@ -10,7 +10,9 @@ interface ClaimMemory {
 }
 class ClaimProcess extends Process {
     public memory: ClaimMemory;
-    public classPath = "components.processes.room.claim";
+    public classPath() {
+        return "components.processes.room.claim";
+    }
 
     public creepDies(pid: number) {
         this.memory.starterCreepPid = _.filter(this.memory.starterCreepPid, p => p !== pid);

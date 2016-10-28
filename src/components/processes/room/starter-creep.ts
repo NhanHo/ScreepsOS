@@ -1,8 +1,10 @@
-import { getProcessById } from "../../kernel/kernel";
+import { getProcessById } from "../../kernel/kernel/kernel";
 import StarterProcess = require("./starter");
-import Process = require("../process");
+import Process = require("../../kernel/kernel/process");
 class StarterCreepProcess extends Process {
-    public readonly classPath = "components.processes.room.starter-creep";
+    public classPath() {
+        return "components.processes.room.starter-creep";
+    }
 
     public getIndex() {
         return this.memory.index;

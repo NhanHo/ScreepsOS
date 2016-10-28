@@ -1,6 +1,6 @@
-import Process = require("../process");
+import Process = require("../../kernel/kernel/process");
 import StarterCreepProcess = require("../room/starter-creep");
-import { getProcessById, addProcess, storeProcessTable } from "../../kernel/kernel";
+import { getProcessById, addProcess, storeProcessTable } from "../../kernel/kernel/kernel";
 class StarterProcess extends Process {
     public static start(roomName: string) {
         let p = new StarterProcess(0, 0);
@@ -9,7 +9,10 @@ class StarterProcess extends Process {
         storeProcessTable();
     }
 
-    public readonly classPath = "components.processes.room.starter";
+    public classPath() {
+        return "components.processes.room.starter";
+    }
+
 
     public getNeededIndex(creepPIDList: number[]): number {
         let process = <StarterCreepProcess[]>_.map(creepPIDList, getProcessById);

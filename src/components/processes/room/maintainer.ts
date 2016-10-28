@@ -1,7 +1,7 @@
 import OvermindProcess = require("../overmind");
 import { OvermindMemory } from "../memory/overmind";
 import MaintainerCreep = require("./maintainer-creep");
-import * as Kernel from "../../kernel/kernel";
+import * as Kernel from "../../kernel/kernel/kernel";
 interface MaintainerMemory extends OvermindMemory {
     roomName: string;
     childPidList: number[];
@@ -16,7 +16,9 @@ export = class MaintainerProcess extends OvermindProcess {
         return p.pid;
     }
 
-    public classPath = "components.processes.room.maintainer";
+    public classPath() {
+        return "components.processes.room.maintainer";
+    }
     public memory: MaintainerMemory;
     public creepDies(__: string, pid: number) {
         this.memory.childPidList = _.filter(this.memory.childPidList, p => (p !== pid));

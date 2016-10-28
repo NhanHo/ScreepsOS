@@ -1,5 +1,5 @@
-import Process = require("../process");
-import { addProcess, getProcessById } from "../../kernel/kernel";
+import Process = require("../../kernel/kernel/process");
+import { addProcess, getProcessById } from "../../kernel/kernel/kernel";
 class DefenseProcess extends Process {
     public static start(roomName: string, parentPID: number) {
         let p = new DefenseProcess(0, parentPID);
@@ -8,7 +8,9 @@ class DefenseProcess extends Process {
         return p.pid;
     }
 
-    public classPath = "components.processes.room.defense";
+    public classPath() {
+        return "components.processes.room.defense";
+    }
     public run(): number {
         let colonyProcess = getProcessById(this.parentPID);
         if (!colonyProcess)

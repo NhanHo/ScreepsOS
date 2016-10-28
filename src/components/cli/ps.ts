@@ -1,4 +1,4 @@
-import { processTable } from "../kernel/kernel";
+import { processTable } from "../kernel/kernel/kernel";
 //import Process = require("../processes/process");
 export = function (argv: string[]) {
     let parentID;

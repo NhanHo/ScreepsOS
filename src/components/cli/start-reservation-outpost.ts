@@ -1,5 +1,5 @@
 import ReservationOutpostProcess = require("../processes/remote-room/reservation-outpost");
-import { processTable, addProcess, storeProcessTable } from "../kernel/kernel";
+import { processTable, addProcess, storeProcessTable } from "../kernel/kernel/kernel";
 import ColonyProcess = require("../processes/room/colony");
 let getColonyProcess = function (roomName: string): ColonyProcess | null {
     for (let pid in processTable) {

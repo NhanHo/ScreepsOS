@@ -1,7 +1,9 @@
-import Process = require("../process");
-import { processTable, storeProcessTable, getProcessById, sleepProcess, killProcess } from "../../kernel/kernel";
+import Process = require("../../kernel/kernel/process");
+import {
+    addProcess, processTable, storeProcessTable,
+    getProcessById, sleepProcess, killProcess
+} from "../../kernel/kernel/kernel";
 import SpawnProcess = require("./spawn");
-import { addProcess } from "../../kernel/kernel";
 import LibrarianProcess = require("./librarian");
 import UpgraderProcess = require("./upgrader");
 import DefenseProcess = require("./defense");
@@ -20,7 +22,9 @@ class ColonyProcess extends Process {
         console.log("New room started:" + roomName);
     }
 
-    public classPath = "components.processes.room.colony";
+    public classPath() {
+        return "components.processes.room.colony";
+    }
 
     public getRoomName() {
         return this.memory.roomName;

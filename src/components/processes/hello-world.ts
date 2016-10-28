@@ -1,5 +1,5 @@
-import { addProcess, storeProcessTable } from "../kernel/kernel";
-import Process = require("./process");
+import { addProcess, storeProcessTable } from "../kernel/kernel/kernel";
+import Process = require("../kernel/kernel/process");
 class HelloWorldProcess extends Process {
     public static startNewCounter() {
         let p = new HelloWorldProcess(0, 0);
@@ -9,7 +9,9 @@ class HelloWorldProcess extends Process {
 
     public status: number;
     public className: string;
-    public readonly classPath: string = "components.process.hello-world";
+    public classPath() {
+        return "components.process.hello-world";
+    }
     public pid: number;
     public parentPID: number;
 

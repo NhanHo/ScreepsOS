@@ -1,5 +1,5 @@
 import ClaimProcess = require("../processes/room/claim");
-import { addProcess, storeProcessTable } from "../kernel/kernel";
+import { addProcess, storeProcessTable } from "../kernel/kernel/kernel";
 export = function (argv: string[]) {
     let p = new ClaimProcess(0, 0);
     addProcess(p);

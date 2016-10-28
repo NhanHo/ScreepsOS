@@ -1,7 +1,7 @@
 import MiningProcess = require("../processes/mining/mining");
-import { addProcess, storeProcessTable } from "../kernel/kernel";
-import Process = require("../processes/process");
-import { getColonyProcess } from "../kernel/colony-utils";
+import { addProcess, storeProcessTable } from "../kernel/kernel/kernel";
+import Process = require("../kernel/kernel/process");
+import { getColonyProcess } from "../utils/colony";
 let addProcessAndSave = function (p: Process) {
     addProcess(p);
     storeProcessTable();

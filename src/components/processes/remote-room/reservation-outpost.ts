@@ -7,7 +7,10 @@ interface ReservationOutpostMemory extends OvermindMemory {
 }
 
 class ReservationOutpostProcess extends OvermindProcess {
-    public classPath = "components.processes.remote-room.reservation-outpost";
+    public classPath() {
+        return "components.processes.remote-room.reservation-outpost";
+    }
+
     public memory: ReservationOutpostMemory;
     public receiveCreep(__: string, creep: Creep) {
         this.memory.reservationCreep = creep.name;

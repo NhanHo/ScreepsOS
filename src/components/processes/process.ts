@@ -1,4 +1,4 @@
-import { killProcess } from "../kernel/kernel";
+import { killProcess } from "../kernel/kernel/kernel";
 import { ProcessPriority } from "./constants";
 import { ProcessStatus } from "./process-status";
 import { ProcessSleep } from "../../typings/process-sleep";

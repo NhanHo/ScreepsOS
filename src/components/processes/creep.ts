@@ -1,6 +1,6 @@
-import Process = require("./process");
+import Process = require("../kernel/kernel/process");
 import { CreepMemory } from "./memory/creep";
-import { getProcessById } from "../kernel/kernel";
+import { getProcessById } from "../kernel/kernel/kernel";
 import OvermindProcess = require("./overmind");
 abstract class CreepProcess extends Process {
     public memory: CreepMemory;

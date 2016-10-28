@@ -1,6 +1,6 @@
 import CreepProcess = require("../creep");
 import { CreepMemory } from "../memory/creep";
-import { getProcessById } from "../../kernel/kernel";
+import { getProcessById } from "../../kernel/kernel/kernel";
 import MiningProcess = require("../mining/mining");
 interface MinerWithLinkCreepMemory extends CreepMemory {
     miningSpot: any[];
@@ -8,7 +8,9 @@ interface MinerWithLinkCreepMemory extends CreepMemory {
 }
 class MinerWithLinkCreep extends CreepProcess {
     public memory: MinerWithLinkCreepMemory;
-    public classPath = "components.processes.mining.miner-with-link-creep";
+    public classPath() {
+        return "components.processes.mining.miner-with-link-creep";
+    }
     public runCreep(creep: Creep): number {
         let [x, y, roomName] = this.memory.miningSpot;
         let pos = new RoomPosition(x, y, roomName);

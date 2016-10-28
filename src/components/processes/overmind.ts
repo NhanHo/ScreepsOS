@@ -1,6 +1,6 @@
-import Process = require("./process");
-import { getSpawnProcess } from "../kernel/kernel-utils";
-import { addProcess } from "../kernel/kernel";
+import Process = require("../kernel/kernel/process");
+import { getSpawnProcess } from "../utils/colony";
+import { addProcess } from "../kernel/kernel/kernel";
 import { OvermindMemory } from "./memory/overmind";
 abstract class OvermindProcess extends Process {
     protected static addProcess = addProcess;

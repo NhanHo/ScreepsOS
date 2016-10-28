@@ -1,6 +1,6 @@
-import Process = require("../process");
+import Process = require("../../kernel/kernel/process");
 import { ProcessPriority } from "../constants";
-import { addProcess, getProcessById } from "../../kernel/kernel";
+import { addProcess, getProcessById } from "../../kernel/kernel/kernel";
 interface CreepRequest {
     pid: number;
     creepID: string;
@@ -15,7 +15,9 @@ class SpawnProcess extends Process {
         return p;
     }
 
-    public classPath = "components.processes.room.spawn";
+    public classPath() {
+        return "components.processes.room.spawn";
+    }
     public getRoomName() {
         return this.memory.roomName;
     }
