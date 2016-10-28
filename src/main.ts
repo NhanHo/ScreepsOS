@@ -1,4 +1,4 @@
-import * as Kernel from "./components/kernel/kernel";
+import * as Kernel from "./components/kernel/kernel/kernel";
 import room_position = require("./prototypes/room-position");
 import structure_prototype = require("./prototypes/structure");
 declare var global: any;
