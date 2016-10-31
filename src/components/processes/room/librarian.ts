@@ -1,6 +1,6 @@
 import Process = require("../../kernel/kernel/process");
 import { getProcessById } from "../../kernel/kernel/kernel";
-import { getSpawnProcess } from "../../utils/colony";
+import { getSpawnProcess } from "../../utils/spawn";
 class LibrarianProcess extends Process {
 
     public classPath() {

@@ -1,5 +1,5 @@
 import Process = require("../kernel/kernel/process");
-import { getSpawnProcess } from "../utils/colony";
+import { getSpawnProcess } from "../utils/spawn";
 import { addProcess } from "../kernel/kernel/kernel";
 import { OvermindMemory } from "./memory/overmind";
 abstract class OvermindProcess extends Process {

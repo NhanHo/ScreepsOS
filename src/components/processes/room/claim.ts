@@ -1,5 +1,5 @@
 import Process = require("../../kernel/kernel/process");
-import { getSpawnProcess } from "../../utils/colony";
+import { getSpawnProcess } from "../../utils/spawn";
 import { addProcess, getProcessById } from "../../kernel/kernel/kernel";
 import StarterClaimCreepProcess = require("./starter-claim-creep");
 interface ClaimMemory {

@@ -3,7 +3,7 @@ import MinerCreep = require("./miner-creep");
 import MinerWithLinkCreep = require("./miner-with-link-creep");
 import CourierCreep = require("./courier");
 import { addProcess, getProcessById } from "../../kernel/kernel/kernel";
-import { getSpawnProcess } from "../../utils/colony";
+import { getSpawnProcess } from "../../utils/spawn";
 import { OvermindMemory } from "../memory/overmind";
 interface MiningMemory extends OvermindMemory {
     minerPid: number | null;

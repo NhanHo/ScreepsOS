@@ -66,8 +66,6 @@ class SpawnProcess extends Process {
             if (spawn) {
                 const body = makeBody(request.bodyParts);
                 const canSpawn = spawn.canCreateCreep(body);
-                console.log(canSpawn);
-                console.log(JSON.stringify(request));
                 if (canSpawn === OK) {
                     let process: any = getProcessById(request.pid);
                     let creepName = spawn.createCreep(body);
