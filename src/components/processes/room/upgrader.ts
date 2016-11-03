@@ -6,6 +6,8 @@ interface UpgraderMemory {
     hasCourier: boolean;
     roomName: string;
     courierName: string | undefined;
+    containerID: string | undefined;
+    isFixingContainer: boolean;
 }
 class UpgraderProcess extends Process {
     public memory: UpgraderMemory;
@@ -50,37 +52,49 @@ class UpgraderProcess extends Process {
 
     public runCreep(creepName: string): number {
         let creep = Game.creeps[creepName];
-        let storage = creep.room.storage!;
+        let storage: StructureStorage | StructureContainer | null = Game.getObjectById(this.memory.containerID!) as StructureStorage | StructureContainer;
         let controller = creep.room.controller!;
+        if (!storage)
+            storage = this.getEnergySource();
+        if (!storage) {
+            sleepProcess(this, 1000);
+            console.log("Missing energy source for upgrader in room " + this.memory.roomName);
+            return 0;
+        } else {
+            this.memory.containerID = storage.id;
+        }
+
         if (creep.pos.inRangeTo(controller.pos, 3) &&
             creep.pos.isNearTo(storage.pos)) {
-            storage.transfer(creep, RESOURCE_ENERGY);
-            creep.upgradeController(controller);
+            creep.withdraw(storage, RESOURCE_ENERGY);
+            this.work(creep);
         } else {
-
             let pos = _.filter(storage.pos.adjacentPositions(), pos => pos.inRangeTo(controller.pos, 3));
             if (pos.length > 0)
                 creep.moveTo(pos[0]);
             else {
-                creep.moveTo(controller);
-                this.memory.hasCourier = true;
+                console.log(`Upgrader in room ${this.memory.roomName} can't find a spot to upgrade`);
             }
         }
+        if (!(storage instanceof StructureStorage))
+            this.memory.hasCourier = true;
         return 0;
     }
 
     private runCourier(creepName: string): number {
         const creep = Game.creeps[creepName];
-        const upgraderCreep = Game.creeps[this.memory.name!];
-        if (!upgraderCreep || !creep)
+        let storage: StructureStorage | StructureContainer | null = Game.getObjectById(this.memory.containerID!) as StructureStorage | StructureContainer;
+        if (!storage) {
             return 0;
+        }
+
         const room = Game.rooms[this.memory.roomName];
         if (creep.carry.energy === 0) {
             creep.moveTo(room.storage!);
             creep.withdraw(room.storage!, RESOURCE_ENERGY);
         } else {
-            creep.moveTo(upgraderCreep);
-            creep.transfer(upgraderCreep, RESOURCE_ENERGY);
+            creep.moveTo(storage);
+            creep.transfer(storage, RESOURCE_ENERGY);
         }
         return 0;
 
@@ -93,6 +107,40 @@ class UpgraderProcess extends Process {
             this.memory.courierName = creep.name;
     }
 
+    private getEnergySource(): StructureContainer | StructureStorage | null {
+        const room = Game.rooms[this.memory.roomName];
+        const storage = room.storage!;
+        const controller = room.controller!;
+        if (!storage)
+            return null;
+        let pos = _.filter(storage.pos.adjacentPositions(), pos => pos.inRangeTo(controller.pos, 3));
+        if (pos.length === 0) {
+            const allContainers = room.find(FIND_STRUCTURES, { filter: (s: Structure) => s.structureType === STRUCTURE_CONTAINER && s.pos.inRangeTo(controller.pos, 3) }) as StructureContainer[];
+            if (allContainers.length > 0) {
+                return allContainers[0];
+            } else
+                return null;
+
+        } else {
+            return storage;
+        }
+
+    }
+
+    private work(creep: Creep) {
+        const container = Game.getObjectById(this.memory.containerID!) as Structure;
+        if (!this.memory.isFixingContainer) {
+            if (container.hits < (container.hitsMax / 2))
+                this.memory.isFixingContainer = true;
+        } else {
+            if (container.hits === container.hitsMax)
+                this.memory.isFixingContainer = false;
+        }
+        if (this.memory.isFixingContainer)
+            creep.repair(container);
+        else
+            creep.upgradeController(creep.room.controller!);
+    }
     private spawnCreep() {
         let roomName = this.memory.roomName;
         let spawnProcess = getSpawnProcess(this.memory.roomName);
