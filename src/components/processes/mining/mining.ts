@@ -50,11 +50,24 @@ class MiningProcess extends Process {
 
             const [x, y, roomName] = this.memory.miningSpot;
             const pos = new RoomPosition(x, y, roomName);
-            const storage = Game.rooms[this.memory.spawningRoomName].storage;
-            if (storage && pos.isNearTo(storage)) {
+            const hasStorageOrLink = function (pos: RoomPosition) {
+                return _.some(pos.lookFor(LOOK_STRUCTURES),
+                    (s: Structure) =>
+                        s.structureType === STRUCTURE_STORAGE ||
+                        s.structureType === STRUCTURE_LINK);
+            }
+
+            // If there is a link or storage to deposit the energy, we don't have to spawn
+            // courier and instead just deposit any mined energy to it directly
+
+            if (_.some(pos.adjacentPositions(), hasStorageOrLink)) {
+                const posWithDeposit = _.find(pos.adjacentPositions(), hasStorageOrLink);
+                const link = _.find(posWithDeposit.lookFor(LOOK_STRUCTURES),
+                    (s: Structure) => s.structureType === STRUCTURE_STORAGE ||
+                        s.structureType === STRUCTURE_LINK) as Structure;
                 let p = new MinerWithLinkCreep(0, this.pid);
                 p = addProcess(p);
-                p.setUp(creepName, this.memory.sourceId, this.memory.miningSpot);
+                p.setUp(creepName, this.memory.sourceId, link.id, this.memory.miningSpot);
                 this.memory.minerPid = p.pid;
             } else {
                 let p = new MinerCreep(0, this.pid);
@@ -84,6 +97,8 @@ class MiningProcess extends Process {
     public getMinerCreep() {
         if (this.memory.minerPid) {
             let p = getProcessById(this.memory.minerPid) as MinerCreep;
+            if (!p || p instanceof MinerWithLinkCreep)
+                return null;
             return p.getMinerCreep();
         }
         return null;

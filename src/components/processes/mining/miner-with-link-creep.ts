@@ -5,6 +5,7 @@ import MiningProcess = require("../mining/mining");
 interface MinerWithLinkCreepMemory extends CreepMemory {
     miningSpot: any[];
     sourceId: string;
+    depositId: string;
 }
 class MinerWithLinkCreep extends CreepProcess {
     public memory: MinerWithLinkCreepMemory;
@@ -19,13 +20,18 @@ class MinerWithLinkCreep extends CreepProcess {
         } else {
             let source = <Source>Game.getObjectById(this.memory.sourceId);
             creep.harvest(source);
+            const energy = <Resource[]>creep.pos.lookFor(LOOK_ENERGY);
+            if (energy.length) {
+                creep.pickup(energy[0]);
+            }
 
             if (_.sum(creep.carry) >= (creep.carryCapacity - 15)) {
-                let storage = creep.room.storage;
+                let storage = Game.getObjectById(this.memory.depositId) as Link | Storage;
                 if (storage) {
                     creep.transfer(storage, RESOURCE_ENERGY);
                 } else {
                     console.log("Missing a storage in room:" + creep.room.name);
+                    this.stop(0);
                 }
             }
 
@@ -50,10 +56,11 @@ class MinerWithLinkCreep extends CreepProcess {
         }
     }
 
-    public setUp(creepName: string, sourceId: string, miningSpot: any) {
+    public setUp(creepName: string, sourceId: string, depositId: string, miningSpot: any) {
         this.memory.creepName = creepName;
         this.memory.sourceId = sourceId;
         this.memory.miningSpot = miningSpot;
+        this.memory.depositId = depositId;
     }
 }
 

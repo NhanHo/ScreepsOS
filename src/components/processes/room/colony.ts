@@ -10,7 +10,7 @@ import DefenseProcess = require("./defense");
 import MaintainerProcess = require("./maintainer");
 import MiningProcess = require("../mining/mining");
 import StarterProcess = require("./starter");
-
+import LinkManagerProcess = require("./link-manager");
 // import BuilderPlannerProcess = require("./building-planner");
 class ColonyProcess extends Process {
     public static start(roomName: string) {
@@ -20,6 +20,7 @@ class ColonyProcess extends Process {
 
         p.memory.roomName = roomName;
         console.log("New room started:" + roomName);
+
     }
 
     public classPath() {
@@ -61,6 +62,12 @@ class ColonyProcess extends Process {
             if (!maintainerPID || !getProcessById(maintainerPID)) {
                 console.log("Starting maintainer process for room:" + room.name);
                 memory.maintainerPID = MaintainerProcess.start(memory.roomName, this.pid);
+            }
+
+            let linkPID = memory.linkPID;
+            if (!linkPID || !getProcessById(linkPID)) {
+                console.log("Starting link process for room:" + room.name);
+                memory.linkPID = LinkManagerProcess.start(memory.roomName, this.pid);
             }
 
             let librarianPID = memory.librarianPID;

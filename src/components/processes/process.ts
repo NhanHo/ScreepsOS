@@ -1,4 +1,4 @@
-import { killProcess } from "../kernel/kernel/kernel";
+import * as Kernel from "../kernel/kernel/kernel";
 import { ProcessPriority } from "./constants";
 import { ProcessStatus } from "./process-status";
 import { ProcessSleep } from "../../typings/process-sleep";
@@ -8,7 +8,7 @@ abstract class Process {
     public sleepInfo?: ProcessSleep;
     public priority: ProcessPriority;
     public memory: any;
-
+    protected kernel = Kernel;
     constructor(public pid: number,
         public parentPID: number,
         priority = ProcessPriority.LowPriority) {
@@ -23,7 +23,7 @@ abstract class Process {
     };
 
     public stop(signal: number) {
-        killProcess(this.pid);
+        Kernel.killProcess(this.pid);
         return signal;
     }
 }
