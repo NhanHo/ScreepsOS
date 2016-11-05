@@ -1,4 +1,5 @@
 import OvermindProcess = require("../overmind");
+import * as Kernel from "../../kernel/kernel/kernel";
 
 interface Coord {
     x: number;
@@ -55,7 +56,7 @@ class CraneProcess extends OvermindProcess {
 
     public static start(roomName: string, pos: Coord, fromID: string, toID: string, parentPID: number = 0) {
         const p = new CraneProcess(0, parentPID);
-        p.kernel.addProcess(p);
+        Kernel.addProcess(p);
         p.memory.spawningRoomName = roomName;
         p.memory.pos = pos;
         p.memory.fromID = fromID;

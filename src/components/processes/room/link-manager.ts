@@ -1,5 +1,6 @@
 import Process = require("../../kernel/kernel/process");
 import CraneProcess = require("./crane");
+import * as Kernel from "../../kernel/kernel/kernel";
 
 interface LinkManagerMemory {
     roomName: string;
@@ -98,7 +99,7 @@ class LinkManagerProcess extends Process {
 
     public static start(roomName: string, colonyPID: number) {
         const p = new LinkManagerProcess(0, colonyPID);
-        p.kernel.addProcess(p);
+        Kernel.addProcess(p);
         p.setUp(roomName);
 
         return p.pid;
