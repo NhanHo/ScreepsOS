@@ -53,8 +53,20 @@ class CraneProcess extends OvermindProcess {
         return 0;
     }
 
+    // When starting, we need to make sure that no one is already doing a similar task
     public static start(roomName: string, pos: Coord, fromID: string, toID: string, parentPID: number = 0) {
         const p = new CraneProcess(0, parentPID);
+        const processTable = p.kernel.processTable
+        for (let i in processTable) {
+            const p = processTable[i];
+            if (p instanceof CraneProcess) {
+                if ((p.memory.spawningRoomName === roomName) &&
+                    (p.memory.fromID === fromID) &&
+                    (p.memory.toID === toID)) {
+                    return p.pid;
+                }
+            }
+        }
         p.kernel.addProcess(p);
         p.memory.spawningRoomName = roomName;
         p.memory.pos = pos;

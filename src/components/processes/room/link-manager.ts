@@ -5,6 +5,7 @@ interface LinkManagerMemory {
     roomName: string;
     senderLinks: string[];
     receiverLinks: string[];
+    lastUpdate: number;
 }
 /** This is a comment */
 class LinkManagerProcess extends Process {
@@ -22,6 +23,10 @@ class LinkManagerProcess extends Process {
      * for too long and request crane/ figure out what is happening
      */
     public run(): number {
+        if (!this.memory.lastUpdate || (this.memory.lastUpdate < (Game.time - 3000))) {
+            this.setUp(this.memory.roomName);
+            this.memory.lastUpdate = Game.time;
+        }
         const neededEnergy = _.chain(this.memory.receiverLinks)
             .map(Game.getObjectById)
             .filter((s: Link) => s && s.energy < (s.energyCapacity / 4)).value() as Link[];
