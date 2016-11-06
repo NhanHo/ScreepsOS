@@ -128,7 +128,7 @@ class MiningProcess extends Process {
         } else
             this.memory.lowContainerUsageStreak = 0;
 
-        if ((this.memory.lowContainerUsageStreak > 750) && (this.memory.courierCount > 1)) {
+        if ((this.memory.lowContainerUsageStreak > 500) && (this.memory.courierCount > 1)) {
 
             this.memory.lastCourierCountChange = this.memory.lastCourierCountChange || (Game.time - 1501);
             if (this.memory.lastCourierCountChange > (Game.time - 1501))

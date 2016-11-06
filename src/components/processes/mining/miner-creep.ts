@@ -39,7 +39,7 @@ class MinerCreepProcess extends Process {
                     let p = <MiningProcess>getProcessById(this.parentPID);
                     p.needMoreCourier();
                 }
-                if (_.sum(container.store) < 300) {
+                if (_.sum(container.store) < 700) {
                     let p = <MiningProcess>getProcessById(this.parentPID);
                     p.lowContainerUsage();
                 }
