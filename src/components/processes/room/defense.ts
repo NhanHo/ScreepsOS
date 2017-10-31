@@ -1,5 +1,5 @@
-import Process = require("../../kernel/kernel/process");
 import { addProcess, getProcessById } from "../../kernel/kernel/kernel";
+import Process = require("../../kernel/kernel/process");
 class DefenseProcess extends Process {
     public static start(roomName: string, parentPID: number) {
         let p = new DefenseProcess(0, parentPID);
@@ -12,17 +12,17 @@ class DefenseProcess extends Process {
         return "components.processes.room.defense";
     }
     public run(): number {
-        let colonyProcess = getProcessById(this.parentPID);
+        const colonyProcess = getProcessById(this.parentPID);
         if (!colonyProcess)
             return this.stop(0);
 
-        let roomName = this.memory.roomName;
-        let room = Game.rooms[roomName];
-        let hostileCreepList = <Creep[]>room.find(FIND_HOSTILE_CREEPS);
+        const roomName = this.memory.roomName;
+        const room = Game.rooms[roomName];
+        const hostileCreepList = room.find(FIND_HOSTILE_CREEPS) as Creep[];
         if (hostileCreepList.length) {
-            let towerList = <Tower[]>room.find(FIND_MY_STRUCTURES,
-                { filter: { structureType: STRUCTURE_TOWER } });
-            for (let tower of towerList) {
+            const towerList = room.find(FIND_MY_STRUCTURES,
+                { filter: { structureType: STRUCTURE_TOWER } }) as Tower[];
+            for (const tower of towerList) {
                 tower.attack(hostileCreepList[0]);
             }
 

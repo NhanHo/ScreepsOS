@@ -83,7 +83,7 @@ class LinkManagerProcess extends Process {
         const links = _.map(linkIDs, Game.getObjectById) as Link[];
         for (const link of links) {
             const storage = link.room.storage!;
-            const hasNoStructure = function (p: RoomPosition): boolean {
+            const hasNoStructure = function(p: RoomPosition): boolean {
                 return !_.some(p.lookFor(LOOK_STRUCTURES), (s: Structure) => (s.structureType != STRUCTURE_ROAD));
             }
             const nextToStorage = (pos: RoomPosition) => pos.isNearTo(storage.pos);

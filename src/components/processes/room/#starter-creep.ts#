@@ -1,27 +1,26 @@
 import { getProcessById } from "../../kernel/kernel";
-import StarterProcess = require("./starter");
 import Process = require("../process");
+import StarterProcess = require("./starter");
 class StarterCreepProcess extends Process {
 
-    readonly classPath = "components.processes.room.starter-creep";
+    public readonly classPath = "components.processes.room.starter-creep";
 
     public getIndex() {
         return this.memory.index;
     }
     private runCreep(creep: Creep) {
-        let starterProcess = <StarterProcess>getProcessById(this.parentPID);
+        const starterProcess = getProcessById(this.parentPID) as StarterProcess;
         if (!starterProcess) {
             creep.suicide();
             this.stop(0);
         }
 
+        const memory = this.memory;
+        const room = creep.room;
+        const index = memory.index;
+        const controller: Controller = room.controller;
 
-        let memory = this.memory;
-        var room = creep.room;
-        let index = memory.index;
-        var controller: Controller = room.controller;
-
-        var targets: ConstructionSite[] = <ConstructionSite[]>room.find(FIND_CONSTRUCTION_SITES);
+        const targets: ConstructionSite[] = room.find(FIND_CONSTRUCTION_SITES) as ConstructionSite[];
         if (controller.level == 0) {
             creep.moveTo(creep.room.controller);
             creep.claimController(creep.room.controller);
@@ -35,7 +34,7 @@ class StarterCreepProcess extends Process {
                 return;
             }
 
-            var source: Source = <Source>creep.room.find(FIND_SOURCES)[index];
+            const source: Source = creep.room.find(FIND_SOURCES)[index] as Source;
 
             creep.moveTo(source);
             creep.harvest(source);
@@ -47,21 +46,20 @@ class StarterCreepProcess extends Process {
 
             }
 
-
             if (creep.room.controller.ticksToDowngrade < 1000) {
                 creep.moveTo(creep.room.controller);
                 creep.upgradeController(creep.room.controller);
                 return;
             }
 
-            var storages: Structure[] = <Structure[]>creep.room.find(FIND_MY_STRUCTURES, {
-                filter: function (s: Extension) {
+            const storages: Structure[] = creep.room.find(FIND_MY_STRUCTURES, {
+                filter(s: Extension) {
                     return s.structureType == STRUCTURE_EXTENSION
                         && s.energy < s.energyCapacity;
-                }
-            });
+                },
+            }) as Structure[];
 
-            var spawnNeedEnergy = creep.room.find(FIND_MY_SPAWNS, { filter: function (spawn: Spawn) { return spawn.energy < spawn.energyCapacity; } });
+            const spawnNeedEnergy = creep.room.find(FIND_MY_SPAWNS, { filter(spawn: Spawn) { return spawn.energy < spawn.energyCapacity; } });
             storages.push.apply(storages, spawnNeedEnergy);
 
             if (!storages.length) {
@@ -79,7 +77,7 @@ class StarterCreepProcess extends Process {
                     }
                 }
             } else {
-                let target = _.min(storages, function (item) {
+                const target = _.min(storages, function(item) {
                     return creep.pos.getRangeTo(item);
                 });
                 creep.moveTo(target);
@@ -90,10 +88,10 @@ class StarterCreepProcess extends Process {
 
     }
     public run(): number {
-        let creep = Game.creeps[this.memory.creepName];
-	
+        const creep = Game.creeps[this.memory.creepName];
+
         if (!creep) {
-            let p = <StarterProcess>getProcessById(this.parentPID);
+            const p = getProcessById(this.parentPID) as StarterProcess;
             p.creepDies(this.pid);
             return 0;
         } else {

@@ -1,6 +1,6 @@
 import { getProcessById } from "../../kernel/kernel/kernel";
-import StarterProcess = require("./starter");
 import Process = require("../../kernel/kernel/process");
+import StarterProcess = require("./starter");
 class StarterCreepProcess extends Process {
     public classPath() {
         return "components.processes.room.starter-creep";
@@ -14,7 +14,7 @@ class StarterCreepProcess extends Process {
 
         if (!creep) {
             console.log("A creep has disappeared:" + this.memory.creepName);
-            const p = <StarterProcess>getProcessById(this.parentPID);
+            const p = getProcessById(this.parentPID) as StarterProcess;
             p.creepDies(this.pid);
             return this.stop(0);
         } else {
@@ -24,7 +24,7 @@ class StarterCreepProcess extends Process {
     }
 
     private runCreep(creep: Creep) {
-        const starterProcess = <StarterProcess>getProcessById(this.parentPID);
+        const starterProcess = getProcessById(this.parentPID) as StarterProcess;
         if (!starterProcess) {
             creep.suicide();
             this.stop(0);
@@ -35,7 +35,7 @@ class StarterCreepProcess extends Process {
         const index = memory.index;
         const controller = room.controller!;
 
-        const targets: ConstructionSite[] = <ConstructionSite[]>room.find(FIND_CONSTRUCTION_SITES);
+        const targets: ConstructionSite[] = room.find(FIND_CONSTRUCTION_SITES) as ConstructionSite[];
         if (controller.level === 0) {
             creep.moveTo(controller);
             creep.claimController(controller);
@@ -49,7 +49,7 @@ class StarterCreepProcess extends Process {
                 return;
             }
 
-            const source: Source = <Source>creep.room.find(FIND_SOURCES)[index];
+            const source: Source = creep.room.find(FIND_SOURCES)[index] as Source;
 
             creep.moveTo(source);
             creep.harvest(source);
@@ -66,14 +66,14 @@ class StarterCreepProcess extends Process {
                 return;
             }
 
-            const storages: Structure[] = <Structure[]>creep.room.find(FIND_MY_STRUCTURES, {
-                filter: function (s: Extension) {
+            const storages: Structure[] = creep.room.find(FIND_MY_STRUCTURES, {
+                filter(s: Extension) {
                     return s.structureType === STRUCTURE_EXTENSION
                         && s.energy < s.energyCapacity;
                 },
-            });
+            }) as Structure[];
 
-            const spawnNeedEnergy = creep.room.find(FIND_MY_SPAWNS, { filter: function (spawn: Spawn) { return spawn.energy < spawn.energyCapacity; } });
+            const spawnNeedEnergy = creep.room.find(FIND_MY_SPAWNS, { filter(spawn: Spawn) { return spawn.energy < spawn.energyCapacity; } });
             storages.push.apply(storages, spawnNeedEnergy);
 
             if (!storages.length) {
@@ -91,7 +91,7 @@ class StarterCreepProcess extends Process {
                     }
                 }
             } else {
-                const target = _.min(storages, function (item) {
+                const target = _.min(storages, function(item) {
                     return creep.pos.getRangeTo(item);
                 });
                 creep.moveTo(target);

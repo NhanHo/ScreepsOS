@@ -1,6 +1,6 @@
+import { addProcess, getProcessById } from "../../kernel/kernel/kernel";
 import Process = require("../../kernel/kernel/process");
 import { getSpawnProcess } from "../../utils/spawn";
-import { addProcess, getProcessById } from "../../kernel/kernel/kernel";
 import StarterClaimCreepProcess = require("./starter-claim-creep");
 interface ClaimMemory {
     spawningRoomName: string;
@@ -15,15 +15,15 @@ class ClaimProcess extends Process {
     }
 
     public creepDies(pid: number) {
-        this.memory.starterCreepPid = _.filter(this.memory.starterCreepPid, p => p !== pid);
+        this.memory.starterCreepPid = _.filter(this.memory.starterCreepPid, (p) => p !== pid);
     }
 
     public getNeededIndex(): number {
-        let creepPIDList = this.memory.starterCreepPid;
-        let process = <StarterClaimCreepProcess[]>_.filter(_.map(creepPIDList, getProcessById),
-            (p: Process) => p instanceof StarterClaimCreepProcess);
-        let odd = _.filter(process, (p => p.getIndex() === 1));
-        let even = _.filter(process, (p => p.getIndex() === 0));
+        const creepPIDList = this.memory.starterCreepPid;
+        const process = _.filter(_.map(creepPIDList, getProcessById),
+            (p: Process) => p instanceof StarterClaimCreepProcess) as StarterClaimCreepProcess[];
+        const odd = _.filter(process, ((p) => p.getIndex() === 1));
+        const even = _.filter(process, ((p) => p.getIndex() === 0));
         if (odd.length < even.length)
             return 1;
         return 0;
@@ -31,7 +31,7 @@ class ClaimProcess extends Process {
 
     public receiveCreep(id: string, creep: Creep): number {
         if (id === "starter") {
-            let p = new StarterClaimCreepProcess(0, this.pid);
+            const p = new StarterClaimCreepProcess(0, this.pid);
             addProcess(p);
             p.memory.creepName = creep.name;
             p.memory.targetRoomName = this.memory.targetRoomName;
@@ -46,16 +46,16 @@ class ClaimProcess extends Process {
     }
 
     public run(): number {
-        let targetRoom = Game.rooms[this.memory.targetRoomName];
+        const targetRoom = Game.rooms[this.memory.targetRoomName];
         if (!targetRoom || !targetRoom.controller!.my) {
             this.runClaimer();
         } else {
             this.memory.starterCreepPid = this.memory.starterCreepPid || [];
-            let starterPid = this.memory.starterCreepPid;
+            const starterPid = this.memory.starterCreepPid;
             if (starterPid.length < 6) {
-                let spawningRoom = Game.rooms[this.memory.spawningRoomName];
-                let energyCapacity = spawningRoom.energyCapacityAvailable;
-                let multiplier = Math.floor(energyCapacity / 250);
+                const spawningRoom = Game.rooms[this.memory.spawningRoomName];
+                const energyCapacity = spawningRoom.energyCapacityAvailable;
+                const multiplier = Math.floor(energyCapacity / 250);
                 this.spawnCreep("starter",
                     { WORK: 1 * multiplier, MOVE: 2 * multiplier, CARRY: 1 * multiplier }, 5);
             }
@@ -65,7 +65,7 @@ class ClaimProcess extends Process {
 
     protected spawnCreep(creepID: string, bodyParts: bodyMap, priority?: number) {
         // TODO: Check and throw error when there is no roomName
-        let spawnProcess = getSpawnProcess(this.memory.spawningRoomName);
+        const spawnProcess = getSpawnProcess(this.memory.spawningRoomName);
 
         if (spawnProcess) {
             spawnProcess.spawn(creepID, bodyParts, this.pid, priority);
@@ -73,11 +73,11 @@ class ClaimProcess extends Process {
     }
 
     private runClaimer() {
-        let claimer = Game.creeps[this.memory.claimerCreep];
+        const claimer = Game.creeps[this.memory.claimerCreep];
         if (!claimer) {
             this.spawnCreep("claimer", { MOVE: 1, CLAIM: 1 }, 5);
         } else {
-            let targetRoom = Game.rooms[this.memory.targetRoomName];
+            const targetRoom = Game.rooms[this.memory.targetRoomName];
             if (targetRoom) {
                 claimer.moveTo(targetRoom.controller!);
                 claimer.claimController(targetRoom.controller!);

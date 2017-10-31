@@ -1,14 +1,14 @@
-import OvermindProcess = require("../overmind");
-import { OvermindMemory } from "../memory/overmind";
-import MaintainerCreep = require("./maintainer-creep");
 import * as Kernel from "../../kernel/kernel/kernel";
+import { OvermindMemory } from "../memory/overmind";
+import OvermindProcess = require("../overmind");
+import MaintainerCreep = require("./maintainer-creep");
 interface MaintainerMemory extends OvermindMemory {
     roomName: string;
     childPidList: number[];
 }
 export = class MaintainerProcess extends OvermindProcess {
     public static start(roomName: string, parentPID: number) {
-        let p = new MaintainerProcess(0, parentPID);
+        const p = new MaintainerProcess(0, parentPID);
         MaintainerProcess.addProcess(p);
         p.memory.spawningRoomName = roomName;
         p.memory.roomName = roomName;
@@ -21,7 +21,7 @@ export = class MaintainerProcess extends OvermindProcess {
     }
     public memory: MaintainerMemory;
     public creepDies(__: string, pid: number) {
-        this.memory.childPidList = _.filter(this.memory.childPidList, p => (p !== pid));
+        this.memory.childPidList = _.filter(this.memory.childPidList, (p) => (p !== pid));
     }
 
     public receiveCreep(id: string, creep: Creep) {
@@ -36,7 +36,7 @@ export = class MaintainerProcess extends OvermindProcess {
     }
 
     public run(): number {
-        let parent = Kernel.getProcessById(this.parentPID);
+        const parent = Kernel.getProcessById(this.parentPID);
         if (!parent || (parent.constructor.name !== "ColonyProcess")) {
             return this.stop(0);
         }
@@ -49,7 +49,7 @@ export = class MaintainerProcess extends OvermindProcess {
         const wallAndRamparts = room.find(FIND_STRUCTURES,
             {
                 filter: (s: Structure) => s.structureType === STRUCTURE_WALL ||
-                    s.structureType === STRUCTURE_RAMPART
+                    s.structureType === STRUCTURE_RAMPART,
             });
 
         const hpList = _.map(wallAndRamparts, (s: Structure) => s.hits);

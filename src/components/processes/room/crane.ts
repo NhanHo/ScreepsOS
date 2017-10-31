@@ -57,7 +57,7 @@ class CraneProcess extends OvermindProcess {
     public static start(roomName: string, pos: Coord, fromID: string, toID: string, parentPID: number = 0) {
         const p = new CraneProcess(0, parentPID);
         const processTable = p.kernel.processTable
-        for (let i in processTable) {
+        for (const i in processTable) {
             const p = processTable[i];
             if (p instanceof CraneProcess) {
                 if ((p.memory.spawningRoomName === roomName) &&

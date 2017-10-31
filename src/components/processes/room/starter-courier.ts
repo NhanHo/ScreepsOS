@@ -3,7 +3,7 @@ import { CreepMemory } from "../memory/creep";
 
 enum CreepState {
     GETTING_ENERGY = 1,
-    DELIVERING
+    DELIVERING,
 }
 
 interface StarterCourierMemory extends CreepMemory {
@@ -32,7 +32,7 @@ class StarterCourier extends CreepProcess {
     }
 
     private getEnergy(creep: Creep) {
-        let targetCreep: Creep = Game.getObjectById(this.memory.targetCreep!) as Creep;
+        const targetCreep: Creep = Game.getObjectById(this.memory.targetCreep!) as Creep;
         if (!targetCreep) {
             this.findEnergySource(creep);
         }

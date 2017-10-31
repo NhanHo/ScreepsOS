@@ -15,7 +15,7 @@ export = class MaintainerCreep extends CreepProcess {
     }
 
     public runCreep(creep: Creep): number {
-        let obj = <Structure | ConstructionSite | null>Game.getObjectById(this.memory.targetId);
+        let obj = Game.getObjectById(this.memory.targetId) as Structure | ConstructionSite | null;
         if (!obj) {
             obj = this.acquireNewTarget();
             if (obj)
@@ -45,27 +45,27 @@ export = class MaintainerCreep extends CreepProcess {
     }
 
     private getLowHealthRampart(room: Room) {
-        const ramparts = <Rampart[]>room.find(FIND_STRUCTURES, { filter: (s: Rampart) => s.structureType === STRUCTURE_RAMPART && s.hits < 1000 });
+        const ramparts = room.find(FIND_STRUCTURES, { filter: (s: Rampart) => s.structureType === STRUCTURE_RAMPART && s.hits < 1000 }) as Rampart[];
         const rampart = ramparts.pop();
         if (rampart)
             return rampart;
         return null;
     }
     private acquireNewTarget(): Structure | ConstructionSite | null {
-        let room = Game.rooms[this.memory.roomName];
+        const room = Game.rooms[this.memory.roomName];
 
-        let lowHealthRampart = this.getLowHealthRampart(room);
+        const lowHealthRampart = this.getLowHealthRampart(room);
         if (lowHealthRampart) {
             return lowHealthRampart;
         }
-        const constructions = <ConstructionSite[]>room.find(FIND_CONSTRUCTION_SITES);
+        const constructions = room.find(FIND_CONSTRUCTION_SITES) as ConstructionSite[];
         const construction = constructions.pop();
         if (construction) {
             return construction;
         }
 
-        const structures = <Structure[]>room.find(FIND_STRUCTURES, { filter: (s: Structure) => ((s.structureType === STRUCTURE_RAMPART) || (s.structureType === STRUCTURE_WALL)) });
-        const sorted = _.chain(structures).sortBy(s => s.hits).reverse();
+        const structures = room.find(FIND_STRUCTURES, { filter: (s: Structure) => ((s.structureType === STRUCTURE_RAMPART) || (s.structureType === STRUCTURE_WALL)) }) as Structure[];
+        const sorted = _.chain(structures).sortBy((s) => s.hits).reverse();
         const s = sorted.value().pop();
         if (s)
             return s;
@@ -74,8 +74,8 @@ export = class MaintainerCreep extends CreepProcess {
     }
 
     private getEnergy(creep: Creep) {
-        let room = Game.rooms[this.memory.roomName];
-        let storage = room.storage;
+        const room = Game.rooms[this.memory.roomName];
+        const storage = room.storage;
         if (storage) {
             creep.moveTo(storage);
             creep.withdraw(storage, RESOURCE_ENERGY);

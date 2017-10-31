@@ -10,11 +10,11 @@ const PluginError = require('gulp-util').PluginError;
 const ts = require('gulp-typescript');
 const tslint = require('gulp-tslint');
 const tsconfig = ts.createProject('tsconfig.json', { typescript: require('typescript') });
-
+const gs = require('glob-stream');
 const config = require('./config.json');
 
 gulp.task('lint', () => {
-  return gulp.src('./src/**/*.ts')
+  return (gulp.src(['./src/**/*.ts', '!./**/node_modules/**', '!./**/typings/**']))
     .pipe(tslint({ formatter: 'prose' }))
     .pipe(tslint.report({
       summarizeFailureOutput: true,
