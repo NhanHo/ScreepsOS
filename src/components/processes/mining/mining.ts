@@ -50,11 +50,10 @@ class MiningProcess extends Process {
 
             const [x, y, roomName] = this.memory.miningSpot;
             const pos = new RoomPosition(x, y, roomName);
+            const possibleDepositType = [STRUCTURE_STORAGE, STRUCTURE_LINK, STRUCTURE_CONTAINER]
             const hasStorageOrLink = function (pos: RoomPosition) {
                 return _.some(pos.lookFor(LOOK_STRUCTURES),
-                    (s: Structure) =>
-                        s.structureType === STRUCTURE_STORAGE ||
-                        s.structureType === STRUCTURE_LINK);
+                              (s: Structure) => _.includes(possibleDepositType, s.structureType))
             }
 
             // If there is a link or storage to deposit the energy, we don't have to spawn
@@ -63,8 +62,7 @@ class MiningProcess extends Process {
             if (_.some(pos.adjacentPositions(), hasStorageOrLink)) {
                 const posWithDeposit = _.find(pos.adjacentPositions(), hasStorageOrLink);
                 const link = _.find(posWithDeposit.lookFor(LOOK_STRUCTURES),
-                    (s: Structure) => s.structureType === STRUCTURE_STORAGE ||
-                        s.structureType === STRUCTURE_LINK) as Structure;
+                                    (s: Structure) => _.includes(possibleDepositType, s.structureType)) as Structure;
                 let p = new MinerWithLinkCreep(0, this.pid);
                 p = addProcess(p);
                 p.setUp(creepName, this.memory.sourceId, link.id, this.memory.miningSpot);

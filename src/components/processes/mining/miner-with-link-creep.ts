@@ -26,7 +26,7 @@ class MinerWithLinkCreep extends CreepProcess {
             }
 
             if (_.sum(creep.carry) >= (creep.carryCapacity - 15)) {
-                let storage = Game.getObjectById(this.memory.depositId) as Link | Storage;
+                let storage = Game.getObjectById(this.memory.depositId) as Link | Storage | Container;
                 if (storage) {
                     creep.transfer(storage, RESOURCE_ENERGY);
                 } else {
