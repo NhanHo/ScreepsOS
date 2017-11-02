@@ -27,7 +27,7 @@ class UpgraderProcess extends Process {
             return this.stop(0);
 
         const room = Game.rooms[this.memory.roomName];
-        if (!room.storage || room.storage.store.energy < 40000) {
+        if (!room.storage || (room.storage.store.energy && room.storage.store.energy < 40000)) {
             sleepProcess(this, 1500);
             return 0;
         }

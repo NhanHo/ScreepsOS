@@ -30,7 +30,7 @@ class MinerCreepProcess extends Process {
             }
             if (container) {
                 if (container.hits < (0.5 * container.hitsMax)) {
-                    if (creep.carry.energy > 30)
+                    if ((creep.carry.energy) && (creep.carry.energy > 30))
                         creep.repair(container);
                 }
                 if (container.store.energy > 0)
@@ -49,7 +49,7 @@ class MinerCreepProcess extends Process {
                     creep.pos.createConstructionSite(STRUCTURE_CONTAINER);
                     constructionSite = <ConstructionSite[]>creep.pos.lookFor(LOOK_CONSTRUCTION_SITES);
                 }
-                if (creep.carry.energy > 30)
+                if ((creep.carry.energy) && (creep.carry.energy > 30))
                     creep.build(constructionSite[0]);
             }
         } else {

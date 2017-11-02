@@ -29,7 +29,7 @@ gulp.task('clean', () => {
 
 let compileFailed = false;
 
-gulp.task('compile', ['lint', 'clean'], () => {
+gulp.task('compile', [], () => {
   compileFailed = false;
   return tsconfig.src()
     .pipe(ts(tsconfig))

@@ -45,7 +45,7 @@ class CraneProcess extends OvermindProcess {
                 if (fromObj) {
                     creep.withdraw(fromObj, RESOURCE_ENERGY);
                 }
-                if (creep.carry.energy > 0)
+                if (creep.carry.energy && creep.carry.energy > 0)
                     creep.transfer(toObj, RESOURCE_ENERGY);
 
             }

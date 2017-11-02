@@ -40,8 +40,8 @@ export = class MaintainerProcess extends OvermindProcess {
         if (!parent || (parent.constructor.name !== "ColonyProcess")) {
             return this.stop(0);
         }
-        const room = Game.rooms[this.memory.spawningRoomName];
-        if (room.storage!.store.energy < 40000) {
+        const room: Room = Game.rooms[this.memory.spawningRoomName]!;
+        if (room!.storage!.store!.energy! < 40000) {
             Kernel.sleepProcess(this, 1500);
             return 0;
         }
